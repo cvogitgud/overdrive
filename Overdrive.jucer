@@ -16,6 +16,9 @@
               file="Source/Processing/HighPassFilter.cpp"/>
         <FILE id="mrD4hX" name="HighPassFilter.h" compile="0" resource="0"
               file="Source/Processing/HighPassFilter.h"/>
+        <FILE id="Y8h7d9" name="LowPassFilter.cpp" compile="1" resource="0"
+              file="Source/Processing/LowPassFilter.cpp"/>
+        <FILE id="r3ilKg" name="LowPassFilter.h" compile="0" resource="0" file="Source/Processing/LowPassFilter.h"/>
       </GROUP>
       <GROUP id="{0604D481-0F4E-4BFD-8B69-A7DF75EA5C20}" name="UI">
         <FILE id="dJUrSF" name="FilterComponent.cpp" compile="1" resource="0"

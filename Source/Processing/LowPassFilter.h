@@ -1,20 +1,19 @@
 /*
   ==============================================================================
 
-    HighPassFilter.h
-    Created: 7 Jul 2025 8:07:33pm
+    LowPassFilter.h
+    Created: 8 Jul 2025 2:03:51pm
     Author:  Chris
 
   ==============================================================================
 */
 
 #pragma once
+#include "LowPassFilter.h"
 
-#include <JuceHeader.h>
-
-class HighPassFilter {
+class LowPassFilter {
 public:
-    HighPassFilter();
+    LowPassFilter();
     void prepareToPlay(double sampleRate, int samplesPerBlock, int numChannels);
     void process(juce::AudioBuffer<float>& buffer);
     void updateParameters(const float cutoff, const float resonance);
@@ -30,6 +29,5 @@ private:
     using Filter = juce::dsp::IIR::Filter<float>;
     using Coefficients = juce::dsp::IIR::Coefficients<float>;
     juce::dsp::ProcessorDuplicator<Filter, Coefficients> filterProcessor;
-    
     
 };

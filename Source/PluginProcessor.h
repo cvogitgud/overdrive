@@ -10,6 +10,7 @@
 
 #include <JuceHeader.h>
 #include "Processing/HighPassFilter.h"
+#include "Processing/LowPassFilter.h"
 
 //==============================================================================
 /**
@@ -68,6 +69,8 @@ private:
     // Distortion
     
     // LP IIR Filter for harsh highs after distortion
+    LowPassFilter lowPassFilter;
+    void updateLowPassFilter();
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout ();
     void parameterChanged (const juce::String& parameterID, float newValue) override;
