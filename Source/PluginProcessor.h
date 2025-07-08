@@ -13,7 +13,7 @@
 //==============================================================================
 /**
 */
-class OverdriveAudioProcessor  : public juce::AudioProcessor
+class OverdriveAudioProcessor  : public juce::AudioProcessor, public juce::AudioProcessorValueTreeState::Listener
 {
 public:
     //==============================================================================
@@ -55,26 +55,26 @@ public:
     
     juce::AudioProcessorValueTreeState treeState;
     
-
 private:
     // necessary?
     // float lastSampleRate;
     
-    // josh hodges uses a ProcessDuplicator to create stereo processing, apparently all mono otherwise
-    // i'll skip this for now while i keep it simple
-    
-    // IIR Filter for HP/muddy lows before distortion
-    // Does this need coefficients?
-    juce::dsp::IIR::Filter<float> lowPassFilter;
+    // HP IIR Filter for muddy lows before distortion
+//    juce::dsp::IIR::Filter<float> highPassFilter;
+    juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> highPassFilterStereo;
+    void updateHighPassFilter();
     
     // Oversampler for Anti-Aliasing
     
     // Distortion
     
-    // IIR Filter for LP/harsh highs after distortion
+    // LP IIR Filter for harsh highs after distortion
+//    juce::dsp::IIR::Filter<float> lowPassFilter;
+    juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> lowPassFilterStereo;
+    void updateLowPassFilter ();
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout ();
-    void parameterChanged (const juce::String& parameterID, float newValue);
+    void parameterChanged (const juce::String& parameterID, float newValue) override;
     void updateParameters ();
     
     //==============================================================================

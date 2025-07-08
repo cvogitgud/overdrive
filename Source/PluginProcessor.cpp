@@ -20,13 +20,22 @@ OverdriveAudioProcessor::OverdriveAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ), treeState(*this, nullptr, "PARAMS", createParameterLayout()),
-                          lowPassFilter()
+                          highPassFilterStereo(juce::dsp::IIR::Coefficients<float>::makeHighPass(44000, 20000.0f, 0.1f)),
+                          lowPassFilterStereo(juce::dsp::IIR::Coefficients<float>::makeLowPass(44000, 20000.0f, 0.1f))
 #endif
 {
+    treeState.addParameterListener("HIGHPASSCUTOFF", this);
+    treeState.addParameterListener("HIGHPASSRES", this);
+    treeState.addParameterListener("LOWPASSCUTOFF", this);
+    treeState.addParameterListener("LOWPASSRES", this);
 }
 
 OverdriveAudioProcessor::~OverdriveAudioProcessor()
 {
+    treeState.removeParameterListener("HIGHPASSCUTOFF", this);
+    treeState.removeParameterListener("HIGHPASSRES", this);
+    treeState.removeParameterListener("LOWPASSCUTOFF", this);
+    treeState.removeParameterListener("LOWPASSRES", this);
 }
 
 //==============================================================================
@@ -100,6 +109,12 @@ void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     spec.sampleRate = sampleRate;
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = getTotalNumOutputChannels();
+    
+    highPassFilterStereo.prepare(spec);
+    highPassFilterStereo.reset();
+    
+    lowPassFilterStereo.prepare(spec);
+    lowPassFilterStereo.reset();
 }
 
 void OverdriveAudioProcessor::releaseResources()
@@ -147,6 +162,7 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     juce::dsp::AudioBlock<float> block {buffer};
     
     // IIR High Pass Filter
+    highPassFilterStereo.process(juce::dsp::ProcessContextReplacing<float> (block));
     
     // Oversampling Anti-Aliasing
     
@@ -159,6 +175,24 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     }
     
     // IIR Low Pass filter
+    lowPassFilterStereo.process(juce::dsp::ProcessContextReplacing<float> (block));
+}
+
+void OverdriveAudioProcessor::updateHighPassFilter (){
+    // grab freq and res from treeState
+    float highPassCutoff = treeState.getRawParameterValue("HIGHPASSCUTOFF")->load();
+    float highPassResonance = treeState.getRawParameterValue("HIGHPASSRES")->load();
+    
+//    highPassFilter.coefficients = juce::dsp::IIR::Coefficients<float>::makeHighPass(44000, highPassCutoff, highPassResonance);
+    *highPassFilterStereo.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(44000, highPassCutoff, highPassResonance);
+    
+}
+
+void OverdriveAudioProcessor::updateLowPassFilter (){
+    float lowPassCutoff = treeState.getRawParameterValue("LOWPASSCUTOFF")->load();
+    float lowPassResonance = treeState.getRawParameterValue("LOWPASSRES")->load();
+    
+    *lowPassFilterStereo.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(44000, lowPassCutoff, lowPassResonance);
 }
 
 //==============================================================================
@@ -169,7 +203,8 @@ bool OverdriveAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* OverdriveAudioProcessor::createEditor()
 {
-    return new OverdriveAudioProcessorEditor (*this);
+//    return new OverdriveAudioProcessorEditor (*this);
+    return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
@@ -193,10 +228,29 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
     return new OverdriveAudioProcessor();
 }
 
+juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::createParameterLayout (){
+    std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
+    
+    
+    auto highPassCutOff = std::make_unique<juce::AudioParameterFloat>("HIGHPASSCUTOFF", "High-pass Cutoff", juce::NormalisableRange<float>(10.0f, 20000.0f, 0.01f, 0.3f), 40.0f);
+    auto highPassResonance = std::make_unique<juce::AudioParameterFloat>("HIGHPASSRES", "High-pass Resonance", juce::NormalisableRange<float>(0.10f, 18.0f, 0.01f), 0.1f);
+    
+    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "Low-pass Cutoff", juce::NormalisableRange<float>(10.0f, 20000.0f, 0.01f, 0.3f), 2000.0f);
+    auto lowPassResonance = std::make_unique<juce::AudioParameterFloat>("LOWPASSRES", "Low-pass Resonance", juce::NormalisableRange<float>(0.10f, 18.0f, 0.01f), 0.1f);
+    
+    params.push_back(std::move(highPassCutOff));
+    params.push_back(std::move(highPassResonance));
+    params.push_back(std::move(lowPassCutOff));
+    params.push_back(std::move(lowPassResonance));
+    
+    return {params.begin(), params.end()};
+}
+
 void OverdriveAudioProcessor::parameterChanged (const juce::String& parameterID, float newValue){
     updateParameters();
 }
 
 void OverdriveAudioProcessor::updateParameters (){
-    // update by loading params from treestate
+    updateHighPassFilter();
+    updateLowPassFilter();
 }
