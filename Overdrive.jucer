@@ -11,6 +11,18 @@
       <FILE id="EY76lE" name="PluginEditor.cpp" compile="1" resource="0"
             file="Source/PluginEditor.cpp"/>
       <FILE id="vnnLlD" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
+      <GROUP id="{A9C2AF0E-88A7-ACFF-A69F-3B29596C2888}" name="Processing">
+        <FILE id="bIETT9" name="HighPassFilter.cpp" compile="1" resource="0"
+              file="Source/Processing/HighPassFilter.cpp"/>
+        <FILE id="mrD4hX" name="HighPassFilter.h" compile="0" resource="0"
+              file="Source/Processing/HighPassFilter.h"/>
+      </GROUP>
+      <GROUP id="{0604D481-0F4E-4BFD-8B69-A7DF75EA5C20}" name="UI">
+        <FILE id="dJUrSF" name="FilterComponent.cpp" compile="1" resource="0"
+              file="Source/UI/FilterComponent.cpp"/>
+        <FILE id="NZGW2c" name="FilterComponent.h" compile="0" resource="0"
+              file="Source/UI/FilterComponent.h"/>
+      </GROUP>
     </GROUP>
   </MAINGROUP>
   <MODULES>

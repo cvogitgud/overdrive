@@ -9,6 +9,7 @@
 #pragma once
 
 #include <JuceHeader.h>
+#include "Processing/HighPassFilter.h"
 
 //==============================================================================
 /**
@@ -56,12 +57,10 @@ public:
     juce::AudioProcessorValueTreeState treeState;
     
 private:
-    // necessary?
-    // float lastSampleRate;
+
     
     // HP IIR Filter for muddy lows before distortion
-//    juce::dsp::IIR::Filter<float> highPassFilter;
-    juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> highPassFilterStereo;
+    HighPassFilter highPassFilter;
     void updateHighPassFilter();
     
     // Oversampler for Anti-Aliasing
@@ -69,9 +68,6 @@ private:
     // Distortion
     
     // LP IIR Filter for harsh highs after distortion
-//    juce::dsp::IIR::Filter<float> lowPassFilter;
-    juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> lowPassFilterStereo;
-    void updateLowPassFilter ();
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout ();
     void parameterChanged (const juce::String& parameterID, float newValue) override;
