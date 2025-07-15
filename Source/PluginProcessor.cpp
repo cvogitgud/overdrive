@@ -102,8 +102,6 @@ void OverdriveAudioProcessor::changeProgramName (int index, const juce::String& 
 //==============================================================================
 void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
-    // lastSampleRate = sampleRate ?
-    
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
     spec.maximumBlockSize = samplesPerBlock;
@@ -111,7 +109,6 @@ void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     
     // prepare high pass filter
     highPassFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
-    
     
     // prepare low pass filter
     lowPassFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
@@ -174,6 +171,9 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         auto* channelData = buffer.getWritePointer (channel);
 
         // ..do something to the data...
+        for (int sample = 0; sample < block.getNumSamples(); ++sample){
+            channelData[sample] = channelData[sample];
+        }
     }
     
     // IIR Low Pass filter
@@ -216,12 +216,16 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::createParameterLayout (){
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
+    float maxFreq = 22000.0f;
+    float minFreq = 10.0f;
+    float maxRes = 18.0f;
+    float minRes = 0.10f;
     
-    auto highPassCutOff = std::make_unique<juce::AudioParameterFloat>("HIGHPASSCUTOFF", "High-pass Cutoff", juce::NormalisableRange<float>(10.0f, 22000.0f, 0.01f, 0.25f), 40.0f);
-    auto highPassResonance = std::make_unique<juce::AudioParameterFloat>("HIGHPASSRES", "High-pass Resonance", juce::NormalisableRange<float>(0.10f, 18.0f, 0.01f), 0.1f);
+    auto highPassCutOff = std::make_unique<juce::AudioParameterFloat>("HIGHPASSCUTOFF", "High-pass Cutoff", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.25f), 40.0f);
+    auto highPassResonance = std::make_unique<juce::AudioParameterFloat>("HIGHPASSRES", "High-pass Resonance", juce::NormalisableRange<float>(minRes, maxRes, 0.01f), 0.1f);
     
-    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "Low-pass Cutoff", juce::NormalisableRange<float>(10.0f, 22000.0f, 0.01f, 0.25f), 8000.0f);
-    auto lowPassResonance = std::make_unique<juce::AudioParameterFloat>("LOWPASSRES", "Low-pass Resonance", juce::NormalisableRange<float>(0.10f, 18.0f, 0.01f), 0.1f);
+    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "Low-pass Cutoff", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.25f), 8000.0f);
+    auto lowPassResonance = std::make_unique<juce::AudioParameterFloat>("LOWPASSRES", "Low-pass Resonance", juce::NormalisableRange<float>(minRes, maxRes, 0.01f), 0.1f);
     
     params.push_back(std::move(highPassCutOff));
     params.push_back(std::move(highPassResonance));

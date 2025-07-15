@@ -20,6 +20,7 @@ void HighPassFilter::prepareToPlay (double sampleRate, int samplesPerBlock, int 
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = numChannels;
     
+    sampleRate = sampleRate;
     filterProcessor.prepare(spec);
     filterProcessor.reset();
 }

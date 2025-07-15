@@ -21,6 +21,7 @@ void LowPassFilter::prepareToPlay (double sampleRate, int samplesPerBlock, int n
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = numChannels;
     
+    sampleRate = sampleRate;
     filterProcessor.prepare(spec);
     filterProcessor.reset();
 }

@@ -21,8 +21,8 @@ public:
     void reset();
     
 private:
-    int sampleRate {40000};
-    float maxFreq {20000.0f};
+    int sampleRate {48000};
+    float maxFreq {22000.0f};
     
     // ugly and confusing to have the filter as a ProcessorDuplicator type under the hood
     // makes it confusing and difficult to work with if trying to use it as a filter

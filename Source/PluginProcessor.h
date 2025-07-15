@@ -35,7 +35,7 @@ public:
     //==============================================================================
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override;
-
+    
     //==============================================================================
     const juce::String getName() const override;
 
@@ -58,20 +58,28 @@ public:
     juce::AudioProcessorValueTreeState treeState;
     
 private:
-
+    float pregain;
     
-    // HP IIR Filter for muddy lows before distortion
+    // Filters =====================================================================
     HighPassFilter highPassFilter;
-    void updateHighPassFilter();
-    
-    // Oversampler for Anti-Aliasing
-    
-    // Distortion
-    
-    // LP IIR Filter for harsh highs after distortion
     LowPassFilter lowPassFilter;
+    void updateHighPassFilter();
     void updateLowPassFilter();
     
+    // Oversampler for Anti-Aliasing ===============================================
+    std::array<juce::dsp::Oversampling<float>, 4> oversamplers {
+        {
+            {2, 0, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, true, true},
+            {2, 1, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, true, true},
+            {2, 2, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, true, true},
+            {2, 3, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, true, true}
+        }
+    };
+    
+    // Distortion ==================================================================
+    float udoDistortion(float input);
+    
+    // Parameters ==================================================================
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout ();
     void parameterChanged (const juce::String& parameterID, float newValue) override;
     void updateParameters ();
