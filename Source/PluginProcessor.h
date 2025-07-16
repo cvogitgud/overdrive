@@ -58,7 +58,7 @@ public:
     juce::AudioProcessorValueTreeState treeState;
     
 private:
-    float pregain;
+    float pregain = 1.0f;
     
     // Filters =====================================================================
     HighPassFilter highPassFilter;
