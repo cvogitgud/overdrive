@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    FilterComponent.cpp
+    Dial.cpp
     Created: 7 Jul 2025 8:07:57pm
     Author:  Chris
 
@@ -9,25 +9,26 @@
 */
 
 #include <JuceHeader.h>
-#include "FilterComponent.h"
+#include "Dial.h"
 
 //==============================================================================
-FilterComponent::FilterComponent()
+Dial::Dial(juce::AudioProcessorValueTreeState& treeState, juce::String parameterId)
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
     slider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     slider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
     
+    sliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(treeState, parameterId, slider);
     
     addAndMakeVisible(slider);
 }
 
-FilterComponent::~FilterComponent()
+Dial::~Dial()
 {
 }
 
-void FilterComponent::paint (juce::Graphics& g)
+void Dial::paint (juce::Graphics& g)
 {
     /* This demo code just fills the component's background and
        draws some placeholder text to get you started.
@@ -43,11 +44,11 @@ void FilterComponent::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (juce::FontOptions (14.0f));
-    g.drawText ("Tone", getLocalBounds(),
+    g.drawText ("Dial", getLocalBounds(),
                 juce::Justification::centred, true);   // draw some placeholder text
 }
 
-void FilterComponent::resized()
+void Dial::resized()
 {
     // make this scale to the entire box bound
     int xCoor = 0;

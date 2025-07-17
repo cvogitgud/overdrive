@@ -9,7 +9,6 @@
 */
 
 #pragma once
-#include "LowPassFilter.h"
 
 class LowPassFilter {
 public:

@@ -19,23 +19,16 @@ OverdriveAudioProcessor::OverdriveAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), treeState(*this, nullptr, "PARAMS", createParameterLayout()),
-                          highPassFilter(), lowPassFilter()
+                       ), treeState(*this, nullptr, "PARAMS", createParameterLayout()), highPassFilter(), lowPassFilter()
 #endif
 {
-    treeState.addParameterListener("HIGHPASSCUTOFF", this);
-    treeState.addParameterListener("HIGHPASSRES", this);
     treeState.addParameterListener("LOWPASSCUTOFF", this);
-    treeState.addParameterListener("LOWPASSRES", this);
     treeState.addParameterListener("PREGAIN", this);
 }
 
 OverdriveAudioProcessor::~OverdriveAudioProcessor()
 {
-    treeState.removeParameterListener("HIGHPASSCUTOFF", this);
-    treeState.removeParameterListener("HIGHPASSRES", this);
     treeState.removeParameterListener("LOWPASSCUTOFF", this);
-    treeState.removeParameterListener("LOWPASSRES", this);
     treeState.removeParameterListener("PREGAIN", this);
 }
 
@@ -109,12 +102,10 @@ void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = getTotalNumOutputChannels();
     
-    // prepare high pass filter
     highPassFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
-    
-    // prepare low pass filter
     lowPassFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
     
+    highPassFilter.updateParameters(highPassCutoff);
     updateParameters();
 }
 
@@ -161,13 +152,12 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         buffer.clear (i, 0, buffer.getNumSamples());
     
     juce::dsp::AudioBlock<float> block {buffer};
-    
-    // IIR High Pass Filter
+
     highPassFilter.process(buffer);
     
     // Oversampling Anti-Aliasing
     
-    // Processing (probably where i want my distortion class to be)
+    // Sample Processing
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
@@ -180,7 +170,6 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         }
     }
     
-    // IIR Low Pass filter
     lowPassFilter.process(buffer);
 }
 
@@ -247,38 +236,39 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::createParameterLayout (){
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
-    float maxFreq = 22000.0f;
-    float minFreq = 10.0f;
+    // i'd like to set this minFreq to highPassCutoff so that if i ever change highPassCutoff, this slider will also change
+    // but for some reason, setting it to highPassCutoff results in the cutoff frequency turning to 0 when slider is at
+    // minimum position (far left).
+    // also i need to document bugs in places better than comments :/
+    const float minFreq = 500.0f;
+    const float maxFreq = 22000.0f;
+    const float defaultLowPassCutoff = 8000.0f;
     
-    auto highPassCutOff = std::make_unique<juce::AudioParameterFloat>("HIGHPASSCUTOFF", "High-pass Cutoff", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.25f), 40.0f);
+    const float minPregain = 1.0f;
+    const float maxPregain = 20.0f;
+    const float defaultPregain = 1.0f;
     
-    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "Low-pass Cutoff", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.25f), 8000.0f);
+    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "Low-pass Cutoff", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f), defaultLowPassCutoff);
     
-    auto pregain = std::make_unique<juce::AudioParameterFloat>("PREGAIN", "Pre-gain", juce::NormalisableRange<float>(1.0f, 20.0f, 0.01f), 1.0f);
+    auto pregain = std::make_unique<juce::AudioParameterFloat>("PREGAIN", "Pre-gain", juce::NormalisableRange<float>(minPregain, maxPregain, 0.01f), defaultPregain);
     
-    params.push_back(std::move(highPassCutOff));
     params.push_back(std::move(lowPassCutOff));
     params.push_back(std::move(pregain));
     
     return {params.begin(), params.end()};
 }
 
-void OverdriveAudioProcessor::updateHighPassFilter (){
-    // grab freq and res from treeState
-    float highPassCutoff = treeState.getRawParameterValue("HIGHPASSCUTOFF")->load();
-
-    highPassFilter.updateParameters(highPassCutoff);
-}
-
 void OverdriveAudioProcessor::updateLowPassFilter (){
-    // grab freq and res from treeState
-    float lowPassCutoff = treeState.getRawParameterValue("LOWPASSCUTOFF")->load();
+    const float lowPassCutoff = treeState.getRawParameterValue("LOWPASSCUTOFF")->load();
     lowPassFilter.updateParameters(lowPassCutoff);
 }
 
-void OverdriveAudioProcessor::updateParameters (){
+void OverdriveAudioProcessor::updatePregain (){
     pregain = treeState.getRawParameterValue("PREGAIN")->load();
-    updateHighPassFilter();
+}
+
+void OverdriveAudioProcessor::updateParameters (){
+    updatePregain();
     updateLowPassFilter();
 }
 

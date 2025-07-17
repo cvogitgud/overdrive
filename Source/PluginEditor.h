@@ -10,7 +10,7 @@
 
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
-#include "UI/FilterComponent.h"
+#include "UI/Dial.h"
 
 //==============================================================================
 /**
@@ -30,7 +30,8 @@ private:
     // access the processor object that created it.
     OverdriveAudioProcessor& audioProcessor;
     
-    FilterComponent filterComponent;
+    Dial pregainDial;
+    Dial filterDial;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OverdriveAudioProcessorEditor)
 };
