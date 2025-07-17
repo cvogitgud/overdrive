@@ -17,12 +17,13 @@ public:
     HighPassFilter();
     void prepareToPlay(double sampleRate, int samplesPerBlock, int numChannels);
     void process(juce::AudioBuffer<float>& buffer);
-    void updateParameters(const float cutoff, const float resonance);
+    void updateParameters(const float cutoff);
     void reset();
     
 private:
     int sampleRate {48000};
     float maxFreq {22000.0f};
+    const float resonance {0.1f};
     
     // ugly and confusing to have the filter as a ProcessorDuplicator type under the hood
     // makes it confusing and difficult to work with if trying to use it as a filter
