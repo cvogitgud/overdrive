@@ -58,10 +58,13 @@ public:
     juce::AudioProcessorValueTreeState treeState;
     
 private:
-    float pregain;
+    float pregain {1.0f};
+    void updatePregain();
+    
     float highPassCutoff = 500.0f;
     
-    void updatePregain();
+    float volume {1.0f};
+    void updateVolume();
     
     HighPassFilter highPassFilter;
     LowPassFilter lowPassFilter;

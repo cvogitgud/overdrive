@@ -12,15 +12,13 @@
 #include "Dial.h"
 
 //==============================================================================
-Dial::Dial(juce::AudioProcessorValueTreeState& treeState, juce::String parameterId)
+Dial::Dial(juce::AudioProcessorValueTreeState& treeState, juce::String parameterId, juce::String parameterName)
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
     slider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     slider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
     
     sliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(treeState, parameterId, slider);
-    
+    dialName = parameterName;
     addAndMakeVisible(slider);
 }
 
@@ -44,7 +42,7 @@ void Dial::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (juce::FontOptions (14.0f));
-    g.drawText ("Dial", getLocalBounds(),
+    g.drawText (dialName, getLocalBounds(),
                 juce::Justification::centred, true);   // draw some placeholder text
 }
 

@@ -11,14 +11,15 @@
 
 //==============================================================================
 OverdriveAudioProcessorEditor::OverdriveAudioProcessorEditor (OverdriveAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), pregainDial(audioProcessor.treeState, "PREGAIN"), filterDial(audioProcessor.treeState, "LOWPASSCUTOFF")
+    : AudioProcessorEditor (&p), audioProcessor (p), pregainDial(audioProcessor.treeState, "PREGAIN", "Pre-gain"), filterDial(audioProcessor.treeState, "LOWPASSCUTOFF", "Tone"), volumeDial(audioProcessor.treeState, "VOLUME", "Volume")
 {
     int width = 300;
     int height = width * 7/5;
     setSize (width, height);
-    
+
     addAndMakeVisible(pregainDial);
     addAndMakeVisible(filterDial);
+    addAndMakeVisible(volumeDial);
 }
 
 OverdriveAudioProcessorEditor::~OverdriveAudioProcessorEditor()
@@ -40,10 +41,10 @@ void OverdriveAudioProcessorEditor::resized()
 {
     int xCoor = 0;
     int yCoor = 0;
-    int filterDialWidth, filterDialHeight;
+    int dialWidth, dialHeight;
+    dialWidth = dialHeight = getWidth() / 2;
     
-    // i want it to be half of the width so we can make the gain filterDial the other half
-    filterDialWidth = filterDialHeight = getWidth() / 2;
-    
-    filterDial.setBounds(xCoor, yCoor, filterDialWidth, filterDialHeight);
+    filterDial.setBounds(xCoor, yCoor, dialWidth, dialHeight);
+    pregainDial.setBounds(filterDial.getRight(), yCoor, dialWidth, dialHeight);
+    volumeDial.setBounds(xCoor + dialWidth / 2, dialHeight, dialWidth, dialHeight);
 }

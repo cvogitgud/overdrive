@@ -24,12 +24,14 @@ OverdriveAudioProcessor::OverdriveAudioProcessor()
 {
     treeState.addParameterListener("LOWPASSCUTOFF", this);
     treeState.addParameterListener("PREGAIN", this);
+    treeState.addParameterListener("VOLUME", this);
 }
 
 OverdriveAudioProcessor::~OverdriveAudioProcessor()
 {
     treeState.removeParameterListener("LOWPASSCUTOFF", this);
     treeState.removeParameterListener("PREGAIN", this);
+    treeState.removeParameterListener("VOLUME", this);
 }
 
 //==============================================================================
@@ -166,7 +168,7 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         for (int sample = 0; sample < block.getNumSamples(); ++sample){
             float input = channelData[sample] * pregain;
 //            channelData[sample] = udoDistortion(input);
-            channelData[sample] = std::tanh(input);
+            channelData[sample] = std::tanh(input) * volume;
         }
     }
     
@@ -174,7 +176,6 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 }
 
 float OverdriveAudioProcessor::udoDistortion(float input){
-    
     // turns out middle branch, signInput * blah is the culprit
     // for absolutely SMASHING the output
     // when signInput constantly = 1.0f or -1.0f, it's fine
@@ -184,7 +185,6 @@ float OverdriveAudioProcessor::udoDistortion(float input){
     float absInput = std::fabs(input);
 //    float signInput = (input >= 0) ? 1.0f : -1.0f;
     float signInput = 1.0f;
-    
     float threshold = 1/3;
 
     if (absInput < threshold) {
@@ -252,8 +252,11 @@ juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::cre
     
     auto pregain = std::make_unique<juce::AudioParameterFloat>("PREGAIN", "Pre-gain", juce::NormalisableRange<float>(minPregain, maxPregain, 0.01f), defaultPregain);
     
+    auto volume = std::make_unique<juce::AudioParameterFloat>("VOLUME", "Volume", juce::NormalisableRange<float>(0.0f, 2.0f, 0.01f), 1.0f);
+    
     params.push_back(std::move(lowPassCutOff));
     params.push_back(std::move(pregain));
+    params.push_back(std::move(volume));
     
     return {params.begin(), params.end()};
 }
@@ -267,8 +270,13 @@ void OverdriveAudioProcessor::updatePregain (){
     pregain = treeState.getRawParameterValue("PREGAIN")->load();
 }
 
+void OverdriveAudioProcessor::updateVolume (){
+    volume = treeState.getRawParameterValue("VOLUME")->load();
+}
+
 void OverdriveAudioProcessor::updateParameters (){
     updatePregain();
+    updateVolume();
     updateLowPassFilter();
 }
 
