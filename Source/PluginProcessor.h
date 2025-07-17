@@ -58,15 +58,13 @@ public:
     juce::AudioProcessorValueTreeState treeState;
     
 private:
-    float pregain;
+    float pregain = 1.0f;
     
-    // Filters =====================================================================
     HighPassFilter highPassFilter;
     LowPassFilter lowPassFilter;
     void updateHighPassFilter();
     void updateLowPassFilter();
     
-    // Oversampler for Anti-Aliasing ===============================================
     std::array<juce::dsp::Oversampling<float>, 4> oversamplers {
         {
             {2, 0, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, true, true},
@@ -76,10 +74,8 @@ private:
         }
     };
     
-    // Distortion ==================================================================
     float udoDistortion(float input);
     
-    // Parameters ==================================================================
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout ();
     void parameterChanged (const juce::String& parameterID, float newValue) override;
     void updateParameters ();

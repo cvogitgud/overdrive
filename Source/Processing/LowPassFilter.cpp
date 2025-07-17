@@ -12,7 +12,7 @@
 #include "LowPassFilter.h"
 
 LowPassFilter::LowPassFilter(){
-    *filterProcessor.state = *Coefficients::makeLowPass(sampleRate, maxFreq, 0.1f);
+    *filterProcessor.state = *Coefficients::makeLowPass(sampleRate, maxFreq, resonance);
 }
 
 void LowPassFilter::prepareToPlay (double sampleRate, int samplesPerBlock, int numChannels){
@@ -31,7 +31,7 @@ void LowPassFilter::process (juce::AudioBuffer<float>& buffer){
     filterProcessor.process(juce::dsp::ProcessContextReplacing<float> (block));
 }
 
-void LowPassFilter::updateParameters (const float cutoff, const float resonance){
+void LowPassFilter::updateParameters (const float cutoff){
     *filterProcessor.state = *Coefficients::makeLowPass(sampleRate, cutoff, resonance);
 }
 

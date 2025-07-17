@@ -16,7 +16,11 @@ FilterComponent::FilterComponent()
 {
     // In your constructor, you should add any child components, and
     // initialise any special settings that your component needs.
-
+    slider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    slider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+    
+    
+    addAndMakeVisible(slider);
 }
 
 FilterComponent::~FilterComponent()
@@ -39,13 +43,17 @@ void FilterComponent::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (juce::FontOptions (14.0f));
-    g.drawText ("FilterComponent", getLocalBounds(),
+    g.drawText ("Tone", getLocalBounds(),
                 juce::Justification::centred, true);   // draw some placeholder text
 }
 
 void FilterComponent::resized()
 {
-    // This method is where you should set the bounds of any child
-    // components that your component contains..
-
+    // make this scale to the entire box bound
+    int xCoor = 0;
+    int yCoor = 0;
+    int sliderWidth, sliderHeight;
+    sliderWidth = sliderHeight = 75;
+    
+    slider.setBounds(xCoor, yCoor, sliderWidth, sliderHeight);
 }

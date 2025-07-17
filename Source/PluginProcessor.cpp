@@ -27,6 +27,7 @@ OverdriveAudioProcessor::OverdriveAudioProcessor()
     treeState.addParameterListener("HIGHPASSRES", this);
     treeState.addParameterListener("LOWPASSCUTOFF", this);
     treeState.addParameterListener("LOWPASSRES", this);
+    treeState.addParameterListener("PREGAIN", this);
 }
 
 OverdriveAudioProcessor::~OverdriveAudioProcessor()
@@ -35,6 +36,7 @@ OverdriveAudioProcessor::~OverdriveAudioProcessor()
     treeState.removeParameterListener("HIGHPASSRES", this);
     treeState.removeParameterListener("LOWPASSCUTOFF", this);
     treeState.removeParameterListener("LOWPASSRES", this);
+    treeState.removeParameterListener("PREGAIN", this);
 }
 
 //==============================================================================
@@ -172,12 +174,42 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 
         // ..do something to the data...
         for (int sample = 0; sample < block.getNumSamples(); ++sample){
-            channelData[sample] = channelData[sample];
+            float input = channelData[sample] * pregain;
+//            channelData[sample] = udoDistortion(input);
+            channelData[sample] = std::tanh(input);
         }
     }
     
     // IIR Low Pass filter
     lowPassFilter.process(buffer);
+}
+
+float OverdriveAudioProcessor::udoDistortion(float input){
+    
+    // turns out middle branch, signInput * blah is the culprit
+    // for absolutely SMASHING the output
+    // when signInput constantly = 1.0f or -1.0f, it's fine
+    // -1.0f is noticeably crunchier
+    
+    float output = 0.0f;
+    float absInput = std::fabs(input);
+//    float signInput = (input >= 0) ? 1.0f : -1.0f;
+    float signInput = 1.0f;
+    
+    float threshold = 1/3;
+
+    if (absInput < threshold) {
+        output = 2.0f * input;
+    }
+    else if (absInput >= threshold && absInput < (2.0f * threshold)){
+        float base = 2.0f - 3.0f * absInput;
+        output = signInput * (3.0f - (base * base)) / 3.0f;
+    }
+    else {
+        output = signInput;
+    }
+    
+    return output;
 }
 
 //==============================================================================
@@ -188,8 +220,7 @@ bool OverdriveAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* OverdriveAudioProcessor::createEditor()
 {
-//    return new OverdriveAudioProcessorEditor (*this);
-    return new juce::GenericAudioProcessorEditor(*this);
+    return new OverdriveAudioProcessorEditor (*this);
 }
 
 //==============================================================================
@@ -218,19 +249,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::cre
     
     float maxFreq = 22000.0f;
     float minFreq = 10.0f;
-    float maxRes = 18.0f;
-    float minRes = 0.10f;
     
     auto highPassCutOff = std::make_unique<juce::AudioParameterFloat>("HIGHPASSCUTOFF", "High-pass Cutoff", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.25f), 40.0f);
-    auto highPassResonance = std::make_unique<juce::AudioParameterFloat>("HIGHPASSRES", "High-pass Resonance", juce::NormalisableRange<float>(minRes, maxRes, 0.01f), 0.1f);
     
     auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "Low-pass Cutoff", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.25f), 8000.0f);
-    auto lowPassResonance = std::make_unique<juce::AudioParameterFloat>("LOWPASSRES", "Low-pass Resonance", juce::NormalisableRange<float>(minRes, maxRes, 0.01f), 0.1f);
+    
+    auto pregain = std::make_unique<juce::AudioParameterFloat>("PREGAIN", "Pre-gain", juce::NormalisableRange<float>(1.0f, 20.0f, 0.01f), 1.0f);
     
     params.push_back(std::move(highPassCutOff));
-    params.push_back(std::move(highPassResonance));
     params.push_back(std::move(lowPassCutOff));
-    params.push_back(std::move(lowPassResonance));
+    params.push_back(std::move(pregain));
     
     return {params.begin(), params.end()};
 }
@@ -238,20 +266,18 @@ juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::cre
 void OverdriveAudioProcessor::updateHighPassFilter (){
     // grab freq and res from treeState
     float highPassCutoff = treeState.getRawParameterValue("HIGHPASSCUTOFF")->load();
-    float highPassResonance = treeState.getRawParameterValue("HIGHPASSRES")->load();
 
-    highPassFilter.updateParameters(highPassCutoff, highPassResonance);
+    highPassFilter.updateParameters(highPassCutoff);
 }
 
 void OverdriveAudioProcessor::updateLowPassFilter (){
     // grab freq and res from treeState
     float lowPassCutoff = treeState.getRawParameterValue("LOWPASSCUTOFF")->load();
-    float lowPassResonance = treeState.getRawParameterValue("LOWPASSRES")->load();
-
-    lowPassFilter.updateParameters(lowPassCutoff, lowPassResonance);
+    lowPassFilter.updateParameters(lowPassCutoff);
 }
 
 void OverdriveAudioProcessor::updateParameters (){
+    pregain = treeState.getRawParameterValue("PREGAIN")->load();
     updateHighPassFilter();
     updateLowPassFilter();
 }

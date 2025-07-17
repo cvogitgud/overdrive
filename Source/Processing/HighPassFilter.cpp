@@ -11,7 +11,7 @@
 #include "HighPassFilter.h"
 
 HighPassFilter::HighPassFilter(){
-    *filterProcessor.state = *Coefficients::makeHighPass(sampleRate, maxFreq, 0.1f);
+    *filterProcessor.state = *Coefficients::makeHighPass(sampleRate, maxFreq, resonance);
 }
 
 void HighPassFilter::prepareToPlay (double sampleRate, int samplesPerBlock, int numChannels){
@@ -30,7 +30,7 @@ void HighPassFilter::process (juce::AudioBuffer<float>& buffer){
     filterProcessor.process(juce::dsp::ProcessContextReplacing<float> (block));
 }
 
-void HighPassFilter::updateParameters (const float cutoff, const float resonance){
+void HighPassFilter::updateParameters (const float cutoff){
     *filterProcessor.state = *Coefficients::makeHighPass(sampleRate, cutoff, resonance);
 }
 
