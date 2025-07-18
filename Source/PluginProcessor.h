@@ -68,6 +68,7 @@ private:
     
     Filter highPassFilter;
     Filter lowPassFilter;
+    Filter antiAliasingFilter;
     void updateHighPassFilter();
     void updateLowPassFilter();
     

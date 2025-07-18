@@ -20,7 +20,8 @@ OverdriveAudioProcessor::OverdriveAudioProcessor()
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
                        ), treeState(*this, nullptr, "PARAMS", createParameterLayout()), highPassFilter(OverdriveEnums::FilterType::Highpass),
-                           lowPassFilter(OverdriveEnums::FilterType::Lowpass)
+                           lowPassFilter(OverdriveEnums::FilterType::Lowpass),
+                           antiAliasingFilter(OverdriveEnums::FilterType::Lowpass)
 #endif
 {
     treeState.addParameterListener("LOWPASSCUTOFF", this);
@@ -107,8 +108,10 @@ void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     
     highPassFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
     lowPassFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
+    antiAliasingFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
     
-    highPassFilter.updateParameters(highPassCutoff);
+    highPassFilter.updateCutoff(highPassCutoff);
+    antiAliasingFilter.updateCutoff(22000/2);
     updateParameters();
 }
 
@@ -159,6 +162,7 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     highPassFilter.process(buffer);
     
     // Anti-Aliasing here
+    antiAliasingFilter.process(buffer);
     
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
@@ -166,8 +170,8 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 
         for (int sample = 0; sample < block.getNumSamples(); ++sample){
             float input = channelData[sample] * pregain;
-//            channelData[sample] = udoDistortion(input);
-            channelData[sample] = std::tanh(input) * volume;
+            channelData[sample] = udoDistortion(input) * volume;
+//            channelData[sample] = std::tanh(input) * volume;
         }
     }
     
@@ -180,8 +184,7 @@ float OverdriveAudioProcessor::udoDistortion(float input){
     float output = 0.0f;
     float absInput = std::fabs(input);
     float signInput = (input >= 0) ? 1.0f : -1.0f;
-//    float signInput = 1.0f;
-    float threshold = 1/3;
+    float threshold = 1.0f/3.0f;
 
     if (absInput < threshold) {
         output = 2.0f * input;
@@ -259,7 +262,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::cre
 
 void OverdriveAudioProcessor::updateLowPassFilter (){
     const float lowPassCutoff = treeState.getRawParameterValue("LOWPASSCUTOFF")->load();
-    lowPassFilter.updateParameters(lowPassCutoff);
+    lowPassFilter.updateCutoff(lowPassCutoff);
 }
 
 void OverdriveAudioProcessor::updatePregain (){
@@ -277,5 +280,13 @@ void OverdriveAudioProcessor::updateParameters (){
 }
 
 void OverdriveAudioProcessor::parameterChanged (const juce::String& parameterID, float newValue){
-    updateParameters();
+    if (parameterID.compare("LOWPASSCUTOFF") == 0){
+        updateLowPassFilter();
+    }
+    else if (parameterID.compare("PREGAIN") == 0){
+        updatePregain();
+    }
+    else if (parameterID.compare("VOLUME") == 0){
+        updateVolume();
+    }
 }

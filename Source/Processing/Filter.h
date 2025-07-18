@@ -18,7 +18,7 @@ public:
     Filter(OverdriveEnums::FilterType type);
     void prepareToPlay(double sampleRate, int samplesPerBlock, int numChannels);
     void process(juce::AudioBuffer<float>& buffer);
-    void updateParameters(const float cutoff);
+    void updateCutoff(const float cutoff);
     void reset();
     
 private:
@@ -27,9 +27,6 @@ private:
     const float resonance {0.1f};
     OverdriveEnums::FilterType filterType;
     
-    // ugly and confusing to have the filter as a ProcessorDuplicator type under the hood
-    // makes it confusing and difficult to work with if trying to use it as a filter
-    // but then only have access to a member variable called "state".
     juce::dsp::ProcessorDuplicator<juce::dsp::IIR::Filter<float>, juce::dsp::IIR::Coefficients<float>> filterProcessor;
     
 };

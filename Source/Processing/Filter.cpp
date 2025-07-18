@@ -41,7 +41,7 @@ void Filter::process (juce::AudioBuffer<float>& buffer){
     filterProcessor.process(juce::dsp::ProcessContextReplacing<float> (block));
 }
 
-void Filter::updateParameters (const float cutoff){
+void Filter::updateCutoff (const float cutoff){
     switch (filterType){
         case OverdriveEnums::FilterType::Lowpass:
             *filterProcessor.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, cutoff, resonance);
