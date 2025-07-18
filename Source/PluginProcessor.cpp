@@ -160,8 +160,8 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     juce::dsp::AudioBlock<float> block {buffer};
 
     highPassFilter.process(buffer);
-    antiAliasingFilter.process(buffer);
-    
+//    antiAliasingFilter.process(buffer);
+
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
