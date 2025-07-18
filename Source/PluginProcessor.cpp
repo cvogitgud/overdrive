@@ -111,7 +111,7 @@ void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     antiAliasingFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
     
     highPassFilter.updateCutoff(highPassCutoff);
-    antiAliasingFilter.updateCutoff(22000/2);
+    antiAliasingFilter.updateCutoff(sampleRate/4);
     updateParameters();
 }
 
@@ -160,9 +160,7 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     juce::dsp::AudioBlock<float> block {buffer};
 
     highPassFilter.process(buffer);
-    
-    // Anti-Aliasing here
-//    antiAliasingFilter.process(buffer);
+    antiAliasingFilter.process(buffer);
     
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
@@ -171,7 +169,6 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         for (int sample = 0; sample < block.getNumSamples(); ++sample){
             float input = channelData[sample] * pregain;
             channelData[sample] = udoDistortion(input) * volume;
-//            channelData[sample] = std::tanh(input) * volume;
         }
     }
     
@@ -179,8 +176,6 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 }
 
 float OverdriveAudioProcessor::udoDistortion(float input){
-    // signInput is responsible for smashing the output?
-    
     float output = 0.0f;
     float absInput = std::fabs(input);
     float signInput = (input >= 0) ? 1.0f : -1.0f;
@@ -235,29 +230,39 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::createParameterLayout (){
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
-    // i'd like to set this minFreq to highPassCutoff so that if i ever change highPassCutoff, this slider will also change
-    // but for some reason, setting it to highPassCutoff results in the cutoff frequency turning to 0 when slider is at
-    // minimum position (far left).
-    // also i need to document bugs in places better than comments :/
-    const float minFreq = 500.0f;
-    const float maxFreq = 22000.0f;
-    const float defaultLowPassCutoff = 8000.0f;
-    
+
     const float minPregain = 1.0f;
     const float maxPregain = 20.0f;
     const float defaultPregain = 1.0f;
     
-    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "Low-pass Cutoff", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.3f), defaultLowPassCutoff);
+    // set minFreq to highPassCutoff, in case changes to highPassCutoff are made
+    // BUG: setting minFreq = highPassCutoff results in frequency == 0 when slider is at 0 position
+    const float minFreq = 500.0f;
+    const float maxFreq = 22000.0f;
+    const float defaultLowPassCutoff = 8000.0f;
+    
+    auto power = std::make_unique<juce::AudioParameterBool>("POWER", "Power", true);
     
     auto pregain = std::make_unique<juce::AudioParameterFloat>("PREGAIN", "Pre-gain", juce::NormalisableRange<float>(minPregain, maxPregain, 0.01f), defaultPregain);
     
+    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "Low-pass Cutoff", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.3f), defaultLowPassCutoff);
+    
     auto volume = std::make_unique<juce::AudioParameterFloat>("VOLUME", "Volume", juce::NormalisableRange<float>(0.0f, 2.0f, 0.01f), 1.0f);
     
+    params.push_back(std::move(power));
     params.push_back(std::move(lowPassCutOff));
     params.push_back(std::move(pregain));
     params.push_back(std::move(volume));
     
     return {params.begin(), params.end()};
+}
+    
+void OverdriveAudioProcessor::updatePowerOn(){
+    powerOn = treeState.getRawParameterValue("POWER")->load();
+}
+    
+void OverdriveAudioProcessor::updatePregain (){
+    pregain = treeState.getRawParameterValue("PREGAIN")->load();
 }
 
 void OverdriveAudioProcessor::updateLowPassFilter (){
@@ -265,15 +270,12 @@ void OverdriveAudioProcessor::updateLowPassFilter (){
     lowPassFilter.updateCutoff(lowPassCutoff);
 }
 
-void OverdriveAudioProcessor::updatePregain (){
-    pregain = treeState.getRawParameterValue("PREGAIN")->load();
-}
-
 void OverdriveAudioProcessor::updateVolume (){
     volume = treeState.getRawParameterValue("VOLUME")->load();
 }
 
 void OverdriveAudioProcessor::updateParameters (){
+    updatePowerOn();
     updatePregain();
     updateVolume();
     updateLowPassFilter();
@@ -288,5 +290,8 @@ void OverdriveAudioProcessor::parameterChanged (const juce::String& parameterID,
     }
     else if (parameterID.compare("VOLUME") == 0){
         updateVolume();
+    }
+    else if (parameterID.compare("POWER") == 0){
+        updatePowerOn();
     }
 }

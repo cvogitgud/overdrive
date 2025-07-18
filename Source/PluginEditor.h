@@ -30,6 +30,8 @@ private:
     // access the processor object that created it.
     OverdriveAudioProcessor& audioProcessor;
     
+    juce::ToggleButton powerButton;
+    
     Dial pregainDial;
     Dial volumeDial;
     Dial filterDial;

@@ -17,6 +17,7 @@ OverdriveAudioProcessorEditor::OverdriveAudioProcessorEditor (OverdriveAudioProc
     int height = width * 7/5;
     setSize (width, height);
 
+    addAndMakeVisible(powerButton);
     addAndMakeVisible(pregainDial);
     addAndMakeVisible(filterDial);
     addAndMakeVisible(volumeDial);
@@ -45,6 +46,7 @@ void OverdriveAudioProcessorEditor::resized()
     dialWidth = getWidth() / 2;
     dialHeight = getHeight() / 4;
     
+    powerButton.setBounds(0, getHeight() * 3/4.0f, 50, 50);
     pregainDial.setBounds(xCoor, yCoor, dialWidth, dialHeight);
     volumeDial.setBounds(pregainDial.getRight(), yCoor, dialWidth, dialHeight);
     filterDial.setBounds(xCoor + dialWidth / 2, dialHeight, dialWidth, dialHeight);

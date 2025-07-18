@@ -25,14 +25,13 @@ public:
     void resized() override;
 
 private:
-    juce::Slider slider;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachment;
-    
     juce::String parameterId;
     juce::String parameterName;
     
     juce::Label label {parameterId, parameterName};
     
-    
+    juce::Slider slider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachment;
+
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dial)
 };

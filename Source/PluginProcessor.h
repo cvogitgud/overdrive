@@ -58,19 +58,24 @@ public:
     juce::AudioProcessorValueTreeState treeState;
     
 private:
+    bool powerOn {false};
+    void updatePowerOn();
+    
     float pregain {1.0f};
     void updatePregain();
     
-    float highPassCutoff = 70.0f;
+    float highPassCutoff {70.0f};
+    Filter highPassFilter;
+    void updateHighPassFilter();
+    
+    Filter lowPassFilter;
+    void updateLowPassFilter();
     
     float volume {1.0f};
     void updateVolume();
     
-    Filter highPassFilter;
-    Filter lowPassFilter;
+    // actually this needs to be an FIR filter, not my custom IIR filter
     Filter antiAliasingFilter;
-    void updateHighPassFilter();
-    void updateLowPassFilter();
     
     float udoDistortion(float input);
     
