@@ -14,11 +14,21 @@
 //==============================================================================
 Dial::Dial(juce::AudioProcessorValueTreeState& treeState, juce::String parameterId, juce::String parameterName)
 {
+    this->parameterId = parameterId;
+    this->parameterName = parameterName;
+    
     slider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     slider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
     
     sliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(treeState, parameterId, slider);
-    dialName = parameterName;
+    
+    label.setColour(juce::Label::ColourIds::textColourId, juce::Colours::white);
+    label.setJustificationType(juce::Justification::centred);
+    label.setFont(juce::FontOptions(15.0f));
+    label.setText(parameterName, juce::dontSendNotification);
+    label.setColour(juce::Label::ColourIds::backgroundColourId, juce::Colours::blue);
+    
+    addAndMakeVisible(label);
     addAndMakeVisible(slider);
 }
 
@@ -39,20 +49,17 @@ void Dial::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (14.0f));
-    g.drawText (dialName, getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
 }
 
 void Dial::resized()
 {
-    // make this scale to the entire box bound
-    int xCoor = 0;
-    int yCoor = 0;
     int sliderWidth, sliderHeight;
-    sliderWidth = sliderHeight = 75;
+    sliderWidth = sliderHeight = getWidth() / 2;
+    int labelWidth = getWidth() / 2;
+    int labelHeight = 40;
+
+    slider.setBounds(getWidth() / 2 - sliderWidth / 2, getHeight() / 3, sliderWidth, sliderHeight);
     
-    slider.setBounds(xCoor, yCoor, sliderWidth, sliderHeight);
+    // set label bounds
+    label.setBounds(getWidth() / 2 - labelWidth / 2, 0, labelWidth, labelHeight);
 }

@@ -28,8 +28,10 @@ private:
     juce::Slider slider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachment;
     
-    // label
-    juce::String dialName;
+    juce::String parameterId;
+    juce::String parameterName;
+    
+    juce::Label label {parameterId, parameterName};
     
     
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dial)
