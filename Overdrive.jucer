@@ -12,6 +12,9 @@
             file="Source/PluginEditor.cpp"/>
       <FILE id="vnnLlD" name="PluginEditor.h" compile="0" resource="0" file="Source/PluginEditor.h"/>
       <GROUP id="{A9C2AF0E-88A7-ACFF-A69F-3B29596C2888}" name="Processing">
+        <FILE id="HIw5F8" name="Enums.h" compile="0" resource="0" file="Source/Processing/Enums.h"/>
+        <FILE id="yj8sbu" name="Filter.cpp" compile="1" resource="0" file="Source/Processing/Filter.cpp"/>
+        <FILE id="oEgvfy" name="Filter.h" compile="0" resource="0" file="Source/Processing/Filter.h"/>
         <FILE id="bIETT9" name="HighPassFilter.cpp" compile="1" resource="0"
               file="Source/Processing/HighPassFilter.cpp"/>
         <FILE id="mrD4hX" name="HighPassFilter.h" compile="0" resource="0"

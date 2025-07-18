@@ -9,8 +9,8 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "Processing/HighPassFilter.h"
-#include "Processing/LowPassFilter.h"
+#include "Processing/Enums.h"
+#include "Processing/Filter.h"
 
 //==============================================================================
 /**
@@ -61,13 +61,13 @@ private:
     float pregain {1.0f};
     void updatePregain();
     
-    float highPassCutoff = 500.0f;
+    float highPassCutoff = 70.0f;
     
     float volume {1.0f};
     void updateVolume();
     
-    HighPassFilter highPassFilter;
-    LowPassFilter lowPassFilter;
+    Filter highPassFilter;
+    Filter lowPassFilter;
     void updateHighPassFilter();
     void updateLowPassFilter();
     

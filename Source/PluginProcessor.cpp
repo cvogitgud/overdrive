@@ -19,7 +19,8 @@ OverdriveAudioProcessor::OverdriveAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), treeState(*this, nullptr, "PARAMS", createParameterLayout()), highPassFilter(), lowPassFilter()
+                       ), treeState(*this, nullptr, "PARAMS", createParameterLayout()), highPassFilter(OverdriveEnums::FilterType::Highpass),
+                           lowPassFilter(OverdriveEnums::FilterType::Lowpass)
 #endif
 {
     treeState.addParameterListener("LOWPASSCUTOFF", this);
@@ -165,8 +166,8 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 
         for (int sample = 0; sample < block.getNumSamples(); ++sample){
             float input = channelData[sample] * pregain;
-            channelData[sample] = udoDistortion(input);
-//            channelData[sample] = std::tanh(input) * volume;
+//            channelData[sample] = udoDistortion(input);
+            channelData[sample] = std::tanh(input) * volume;
         }
     }
     
