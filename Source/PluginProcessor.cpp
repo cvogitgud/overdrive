@@ -109,6 +109,11 @@ void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     
     highPassFilter.updateParameters(highPassCutoff);
     updateParameters();
+    
+    for (auto& oversampler : oversamplers){
+        oversampler.reset();
+        oversampler.initProcessing(samplesPerBlock);
+    }
 }
 
 void OverdriveAudioProcessor::releaseResources()
@@ -157,18 +162,16 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 
     highPassFilter.process(buffer);
     
-    // Oversampling Anti-Aliasing
+    // Anti-Aliasing here
     
-    // Sample Processing
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
         auto* channelData = buffer.getWritePointer (channel);
 
-        // ..do something to the data...
         for (int sample = 0; sample < block.getNumSamples(); ++sample){
             float input = channelData[sample] * pregain;
-//            channelData[sample] = udoDistortion(input);
-            channelData[sample] = std::tanh(input) * volume;
+            channelData[sample] = udoDistortion(input);
+//            channelData[sample] = std::tanh(input) * volume;
         }
     }
     
@@ -176,15 +179,12 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
 }
 
 float OverdriveAudioProcessor::udoDistortion(float input){
-    // turns out middle branch, signInput * blah is the culprit
-    // for absolutely SMASHING the output
-    // when signInput constantly = 1.0f or -1.0f, it's fine
-    // -1.0f is noticeably crunchier
+    // signInput is responsible for smashing the output?
     
     float output = 0.0f;
     float absInput = std::fabs(input);
-//    float signInput = (input >= 0) ? 1.0f : -1.0f;
-    float signInput = 1.0f;
+    float signInput = (input >= 0) ? 1.0f : -1.0f;
+//    float signInput = 1.0f;
     float threshold = 1/3;
 
     if (absInput < threshold) {
@@ -248,7 +248,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::cre
     const float maxPregain = 20.0f;
     const float defaultPregain = 1.0f;
     
-    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "Low-pass Cutoff", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f), defaultLowPassCutoff);
+    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "Low-pass Cutoff", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.3f), defaultLowPassCutoff);
     
     auto pregain = std::make_unique<juce::AudioParameterFloat>("PREGAIN", "Pre-gain", juce::NormalisableRange<float>(minPregain, maxPregain, 0.01f), defaultPregain);
     

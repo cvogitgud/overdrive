@@ -71,15 +71,6 @@ private:
     void updateHighPassFilter();
     void updateLowPassFilter();
     
-    std::array<juce::dsp::Oversampling<float>, 4> oversamplers {
-        {
-            {2, 0, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, true, true},
-            {2, 1, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, true, true},
-            {2, 2, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, true, true},
-            {2, 3, juce::dsp::Oversampling<float>::filterHalfBandPolyphaseIIR, true, true}
-        }
-    };
-    
     float udoDistortion(float input);
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout ();
