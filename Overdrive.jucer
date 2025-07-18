@@ -21,10 +21,8 @@
         <FILE id="r3ilKg" name="LowPassFilter.h" compile="0" resource="0" file="Source/Processing/LowPassFilter.h"/>
       </GROUP>
       <GROUP id="{0604D481-0F4E-4BFD-8B69-A7DF75EA5C20}" name="UI">
-        <FILE id="dJUrSF" name="FilterComponent.cpp" compile="1" resource="0"
-              file="Source/UI/FilterComponent.cpp"/>
-        <FILE id="NZGW2c" name="FilterComponent.h" compile="0" resource="0"
-              file="Source/UI/FilterComponent.h"/>
+        <FILE id="dJUrSF" name="Dial.cpp" compile="1" resource="0" file="Source/UI/Dial.cpp"/>
+        <FILE id="NZGW2c" name="Dial.h" compile="0" resource="0" file="Source/UI/Dial.h"/>
       </GROUP>
     </GROUP>
   </MAINGROUP>

@@ -1,7 +1,7 @@
 /*
   ==============================================================================
 
-    FilterComponent.h
+    Dial.h
     Created: 7 Jul 2025 8:07:57pm
     Author:  Chris
 
@@ -15,18 +15,22 @@
 //==============================================================================
 /*
 */
-class FilterComponent  : public juce::Component
+class Dial  : public juce::Component
 {
 public:
-    FilterComponent();
-    ~FilterComponent() override;
+    Dial(juce::AudioProcessorValueTreeState& treeState, juce::String parameterId, juce::String parameterName);
+    ~Dial() override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
 
 private:
     juce::Slider slider;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachment;
+    
+    // label
+    juce::String dialName;
     
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (FilterComponent)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (Dial)
 };
