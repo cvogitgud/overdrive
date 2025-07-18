@@ -111,7 +111,7 @@ void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     antiAliasingFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
     
     highPassFilter.updateCutoff(highPassCutoff);
-    antiAliasingFilter.updateCutoff(22000/2);
+    antiAliasingFilter.updateCutoff(sampleRate/4);
     updateParameters();
 }
 
@@ -160,9 +160,7 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     juce::dsp::AudioBlock<float> block {buffer};
 
     highPassFilter.process(buffer);
-    
-    // Anti-Aliasing here
-    antiAliasingFilter.process(buffer);
+//    antiAliasingFilter.process(buffer);
     
     for (int channel = 0; channel < totalNumInputChannels; ++channel)
     {
