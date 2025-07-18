@@ -109,11 +109,6 @@ void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     
     highPassFilter.updateParameters(highPassCutoff);
     updateParameters();
-    
-    for (auto& oversampler : oversamplers){
-        oversampler.reset();
-        oversampler.initProcessing(samplesPerBlock);
-    }
 }
 
 void OverdriveAudioProcessor::releaseResources()
