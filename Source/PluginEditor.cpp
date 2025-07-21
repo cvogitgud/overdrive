@@ -52,7 +52,7 @@ void OverdriveAudioProcessorEditor::resized()
     
     // set powerSwitch component bounds
     
-    powerSwitch.setBounds(0, getHeight() * 3/4.0f, powerSwitchWidth, powerSwitchHeight);
+    powerSwitch.setBounds(getWidth() / 2 - powerSwitchWidth / 2, getHeight() * 2/3.0f, powerSwitchWidth, powerSwitchHeight);
     pregainDial.setBounds(xCoor, yCoor, dialWidth, dialHeight);
     volumeDial.setBounds(pregainDial.getRight(), yCoor, dialWidth, dialHeight);
     filterDial.setBounds(xCoor + dialWidth / 2, dialHeight, dialWidth, dialHeight);

@@ -15,6 +15,10 @@
 PowerSwitch::PowerSwitch(juce::AudioProcessorValueTreeState& treeState, juce::String parameterID)
 {
     buttonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(treeState, parameterID, button);
+    button.setToggleable(true);
+    button.setColour(juce::TextButton::buttonOnColourId, juce::Colours::red);
+    button.setClickingTogglesState(true);
+    
     addAndMakeVisible(button);
 }
 
@@ -35,16 +39,11 @@ void PowerSwitch::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::grey);
     g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
-
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (14.0f));
-    g.drawText ("PowerSwitch", getLocalBounds(),
-                juce::Justification::centred, true);   // draw some placeholder text
 }
 
 void PowerSwitch::resized()
 {
     // This method is where you should set the bounds of any child
     // components that your component contains..
-    button.centreWithSize(50, 50);
+    button.setBounds(0, 0, getWidth(), getHeight());
 }
