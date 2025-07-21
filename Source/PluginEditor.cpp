@@ -11,13 +11,13 @@
 
 //==============================================================================
 OverdriveAudioProcessorEditor::OverdriveAudioProcessorEditor (OverdriveAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), pregainDial(audioProcessor.treeState, "PREGAIN", "Pre-gain"), volumeDial(audioProcessor.treeState, "VOLUME", "Volume"), filterDial(audioProcessor.treeState, "LOWPASSCUTOFF", "Tone") 
+    : AudioProcessorEditor (&p), audioProcessor (p), powerSwitch(audioProcessor.treeState, "POWER"), pregainDial(audioProcessor.treeState, "PREGAIN", "Pre-gain"), volumeDial(audioProcessor.treeState, "VOLUME", "Volume"), filterDial(audioProcessor.treeState, "LOWPASSCUTOFF", "Tone") 
 {
     int width = 300;
     int height = width * 7/5;
     setSize (width, height);
-
-    addAndMakeVisible(powerButton);
+    
+    addAndMakeVisible(powerSwitch);
     addAndMakeVisible(pregainDial);
     addAndMakeVisible(filterDial);
     addAndMakeVisible(volumeDial);
@@ -46,7 +46,13 @@ void OverdriveAudioProcessorEditor::resized()
     dialWidth = getWidth() / 2;
     dialHeight = getHeight() / 4;
     
-    powerButton.setBounds(0, getHeight() * 3/4.0f, 50, 50);
+    int powerSwitchWidth, powerSwitchHeight;
+    powerSwitchWidth = 100;
+    powerSwitchHeight = 100;
+    
+    // set powerSwitch component bounds
+    
+    powerSwitch.setBounds(0, getHeight() * 3/4.0f, powerSwitchWidth, powerSwitchHeight);
     pregainDial.setBounds(xCoor, yCoor, dialWidth, dialHeight);
     volumeDial.setBounds(pregainDial.getRight(), yCoor, dialWidth, dialHeight);
     filterDial.setBounds(xCoor + dialWidth / 2, dialHeight, dialWidth, dialHeight);

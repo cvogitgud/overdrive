@@ -18,17 +18,17 @@
 class Dial  : public juce::Component
 {
 public:
-    Dial(juce::AudioProcessorValueTreeState& treeState, juce::String parameterId, juce::String parameterName);
+    Dial(juce::AudioProcessorValueTreeState& treeState, juce::String parameterID, juce::String parameterName);
     ~Dial() override;
 
     void paint (juce::Graphics&) override;
     void resized() override;
 
 private:
-    juce::String parameterId;
+    juce::String parameterID;
     juce::String parameterName;
     
-    juce::Label label {parameterId, parameterName};
+    juce::Label label {parameterID, parameterName};
     
     juce::Slider slider;
     std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> sliderAttachment;

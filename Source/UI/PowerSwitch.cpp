@@ -12,11 +12,10 @@
 #include "PowerSwitch.h"
 
 //==============================================================================
-PowerSwitch::PowerSwitch()
+PowerSwitch::PowerSwitch(juce::AudioProcessorValueTreeState& treeState, juce::String parameterID)
 {
-    // In your constructor, you should add any child components, and
-    // initialise any special settings that your component needs.
-
+    buttonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(treeState, parameterID, button);
+    addAndMakeVisible(button);
 }
 
 PowerSwitch::~PowerSwitch()
@@ -47,5 +46,5 @@ void PowerSwitch::resized()
 {
     // This method is where you should set the bounds of any child
     // components that your component contains..
-
+    button.centreWithSize(50, 50);
 }

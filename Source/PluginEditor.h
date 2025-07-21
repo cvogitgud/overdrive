@@ -11,6 +11,7 @@
 #include <JuceHeader.h>
 #include "PluginProcessor.h"
 #include "UI/Dial.h"
+#include "UI/PowerSwitch.h"
 
 //==============================================================================
 /**
@@ -29,9 +30,8 @@ private:
     // This reference is provided as a quick way for your editor to
     // access the processor object that created it.
     OverdriveAudioProcessor& audioProcessor;
-    
-    juce::ToggleButton powerButton;
-    
+
+    PowerSwitch powerSwitch;
     Dial pregainDial;
     Dial volumeDial;
     Dial filterDial;
