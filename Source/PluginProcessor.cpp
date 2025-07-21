@@ -266,8 +266,6 @@ juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::cre
     
 void OverdriveAudioProcessor::updatePowerOn(){
     powerOn = treeState.getRawParameterValue("POWER")->load();
-    std::string powerStatus = powerOn ? "On" : "Off";
-    DBG("Power status: " << powerStatus);
 }
     
 void OverdriveAudioProcessor::updatePregain (){
