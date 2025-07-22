@@ -12,15 +12,15 @@
 #include "Dial.h"
 
 //==============================================================================
-Dial::Dial(juce::AudioProcessorValueTreeState& treeState, juce::String parameterId, juce::String parameterName)
+Dial::Dial(juce::AudioProcessorValueTreeState& treeState, juce::String parameterID, juce::String parameterName)
 {
-    this->parameterId = parameterId;
+    this->parameterID = parameterID;
     this->parameterName = parameterName;
     
     slider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     slider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
     
-    sliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(treeState, parameterId, slider);
+    sliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(treeState, parameterID, slider);
     
     label.setColour(juce::Label::ColourIds::textColourId, juce::Colours::white);
     label.setJustificationType(juce::Justification::centred);
@@ -55,11 +55,16 @@ void Dial::resized()
 {
     int sliderWidth, sliderHeight;
     sliderWidth = sliderHeight = getWidth() / 2;
+    int sliderXPos = getWidth() / 2 - sliderWidth / 2;
+    int sliderYPos = getHeight() / 3;
+    
     int labelWidth = getWidth() / 2;
     int labelHeight = 40;
+    int labelXPos = getWidth() / 2 - labelWidth / 2;
+    int labelYPos = 0;
 
-    slider.setBounds(getWidth() / 2 - sliderWidth / 2, getHeight() / 3, sliderWidth, sliderHeight);
+    slider.setBounds(sliderXPos, sliderYPos, sliderWidth, sliderHeight);
     
     // set label bounds
-    label.setBounds(getWidth() / 2 - labelWidth / 2, 0, labelWidth, labelHeight);
+    label.setBounds(labelXPos, labelYPos, labelWidth, labelHeight);
 }

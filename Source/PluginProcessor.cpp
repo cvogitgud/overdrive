@@ -8,6 +8,8 @@
 
 #include "PluginProcessor.h"
 #include "PluginEditor.h"
+#include <string>
+#include <iostream>
 
 //==============================================================================
 OverdriveAudioProcessor::OverdriveAudioProcessor()
@@ -24,15 +26,18 @@ OverdriveAudioProcessor::OverdriveAudioProcessor()
                            antiAliasingFilter(OverdriveEnums::FilterType::Lowpass)
 #endif
 {
-    treeState.addParameterListener("LOWPASSCUTOFF", this);
+    treeState.addParameterListener("POWER", this);
     treeState.addParameterListener("PREGAIN", this);
+    treeState.addParameterListener("LOWPASSCUTOFF", this);
     treeState.addParameterListener("VOLUME", this);
+    
 }
 
 OverdriveAudioProcessor::~OverdriveAudioProcessor()
 {
-    treeState.removeParameterListener("LOWPASSCUTOFF", this);
+    treeState.addParameterListener("POWER", this);
     treeState.removeParameterListener("PREGAIN", this);
+    treeState.removeParameterListener("LOWPASSCUTOFF", this);
     treeState.removeParameterListener("VOLUME", this);
 }
 
@@ -157,22 +162,24 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
         buffer.clear (i, 0, buffer.getNumSamples());
     
-    juce::dsp::AudioBlock<float> block {buffer};
+    if (powerOn){
+        juce::dsp::AudioBlock<float> block {buffer};
 
-    highPassFilter.process(buffer);
-//    antiAliasingFilter.process(buffer);
+        highPassFilter.process(buffer);
+        //    antiAliasingFilter.process(buffer);
 
-    for (int channel = 0; channel < totalNumInputChannels; ++channel)
-    {
-        auto* channelData = buffer.getWritePointer (channel);
+        for (int channel = 0; channel < totalNumInputChannels; ++channel)
+        {
+            auto* channelData = buffer.getWritePointer (channel);
 
-        for (int sample = 0; sample < block.getNumSamples(); ++sample){
-            float input = channelData[sample] * pregain;
-            channelData[sample] = udoDistortion(input) * volume;
+            for (int sample = 0; sample < block.getNumSamples(); ++sample){
+                float input = channelData[sample] * pregain;
+                channelData[sample] = udoDistortion(input) * volume;
+            }
         }
+
+        lowPassFilter.process(buffer);
     }
-    
-    lowPassFilter.process(buffer);
 }
 
 float OverdriveAudioProcessor::udoDistortion(float input){
@@ -282,16 +289,17 @@ void OverdriveAudioProcessor::updateParameters (){
 }
 
 void OverdriveAudioProcessor::parameterChanged (const juce::String& parameterID, float newValue){
-    if (parameterID.compare("LOWPASSCUTOFF") == 0){
-        updateLowPassFilter();
-    }
-    else if (parameterID.compare("PREGAIN") == 0){
-        updatePregain();
-    }
-    else if (parameterID.compare("VOLUME") == 0){
-        updateVolume();
-    }
-    else if (parameterID.compare("POWER") == 0){
-        updatePowerOn();
-    }
+//    if (parameterID.compare("LOWPASSCUTOFF") == 0){
+//        updateLowPassFilter();
+//    }
+//    else if (parameterID.compare("PREGAIN") == 0){
+//        updatePregain();
+//    }
+//    else if (parameterID.compare("VOLUME") == 0){
+//        updateVolume();
+//    }
+//    else if (parameterID.compare("POWER") == 0){
+//        updatePowerOn();
+//    }
+    updateParameters();
 }

@@ -11,13 +11,20 @@
 
 //==============================================================================
 OverdriveAudioProcessorEditor::OverdriveAudioProcessorEditor (OverdriveAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), pregainDial(audioProcessor.treeState, "PREGAIN", "Pre-gain"), volumeDial(audioProcessor.treeState, "VOLUME", "Volume"), filterDial(audioProcessor.treeState, "LOWPASSCUTOFF", "Tone") 
+    : AudioProcessorEditor (&p), audioProcessor (p), powerSwitch(audioProcessor.treeState, "POWER"), pregainDial(audioProcessor.treeState, "PREGAIN", "Pre-gain"), volumeDial(audioProcessor.treeState, "VOLUME", "Volume"), filterDial(audioProcessor.treeState, "LOWPASSCUTOFF", "Tone") 
 {
     int width = 300;
     int height = width * 7/5;
     setSize (width, height);
-
-    addAndMakeVisible(powerButton);
+    
+    pedalLabel.setColour(juce::Label::ColourIds::textColourId, juce::Colours::white);
+    pedalLabel.setJustificationType(juce::Justification::centred);
+    pedalLabel.setFont(juce::FontOptions(15.0f));
+    pedalLabel.setText(pedalName, juce::dontSendNotification);
+    pedalLabel.setColour(juce::Label::ColourIds::backgroundColourId, juce::Colours::green);
+    
+    addAndMakeVisible(pedalLabel);
+    addAndMakeVisible(powerSwitch);
     addAndMakeVisible(pregainDial);
     addAndMakeVisible(filterDial);
     addAndMakeVisible(volumeDial);
@@ -33,9 +40,6 @@ void OverdriveAudioProcessorEditor::paint (juce::Graphics& g)
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
 
-    g.setColour (juce::Colours::white);
-    g.setFont (juce::FontOptions (15.0f));
-    g.drawFittedText ("Overdrive", getLocalBounds(), juce::Justification::centred, 1);
 }
 
 void OverdriveAudioProcessorEditor::resized()
@@ -45,9 +49,24 @@ void OverdriveAudioProcessorEditor::resized()
     int dialWidth, dialHeight;
     dialWidth = getWidth() / 2;
     dialHeight = getHeight() / 4;
-    
-    powerButton.setBounds(0, getHeight() * 3/4.0f, 50, 50);
     pregainDial.setBounds(xCoor, yCoor, dialWidth, dialHeight);
     volumeDial.setBounds(pregainDial.getRight(), yCoor, dialWidth, dialHeight);
-    filterDial.setBounds(xCoor + dialWidth / 2, dialHeight, dialWidth, dialHeight);
+    filterDial.setBounds(centerWithHorizontal(dialWidth), dialHeight, dialWidth, dialHeight);
+    
+    int powerSwitchWidth, powerSwitchHeight;
+    powerSwitchWidth = 120;
+    powerSwitchHeight = 80;
+    int powerSwitchX = centerWithHorizontal(powerSwitchWidth);
+    int powerSwitchY = getHeight() * 2.0f/3;
+    powerSwitch.setBounds(powerSwitchX, powerSwitchY, powerSwitchWidth, powerSwitchHeight);
+    
+    int labelWidth = getWidth();
+    int labelHeight = powerSwitch.getY() - filterDial.getBottom();
+    int labelX = centerWithHorizontal(labelWidth);
+    int labelY = filterDial.getBottom();
+    pedalLabel.setBounds(labelX, labelY, labelWidth, labelHeight);
+}
+
+const int OverdriveAudioProcessorEditor::centerWithHorizontal(const int componentWidth){
+    return getWidth() / 2 - componentWidth / 2;
 }
