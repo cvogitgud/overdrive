@@ -12,28 +12,32 @@
 #include "Dial.h"
 
 //==============================================================================
-Dial::Dial(juce::AudioProcessorValueTreeState& treeState, juce::String parameterID, juce::String parameterName)
+Dial::Dial(juce::AudioProcessorValueTreeState& treeState, juce::String parameterId, juce::String parameterName)
 {
-    this->parameterID = parameterID;
-    this->parameterName = parameterName;
-    
-    slider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
-    slider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
-    
-    sliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(treeState, parameterID, slider);
-    
-    label.setColour(juce::Label::ColourIds::textColourId, juce::Colours::white);
-    label.setJustificationType(juce::Justification::centred);
-    label.setFont(juce::FontOptions(15.0f));
-    label.setText(parameterName, juce::dontSendNotification);
-    label.setColour(juce::Label::ColourIds::backgroundColourId, juce::Colours::blue);
-    
-    addAndMakeVisible(label);
+    initSlider(treeState, parameterId);
+    slider.setLookAndFeel(&dialStyle);
     addAndMakeVisible(slider);
+    
+    initLabel(parameterName);
+    addAndMakeVisible(label);
 }
 
 Dial::~Dial()
 {
+}
+
+void Dial::initSlider(juce::AudioProcessorValueTreeState& treeState, juce::String parameterId){
+    slider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    slider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
+    
+    sliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(treeState, parameterId, slider);
+}
+
+void Dial::initLabel(const juce::String parameterName){
+    label.setColour(juce::Label::ColourIds::textColourId, juce::Colours::white);
+    label.setJustificationType(juce::Justification::centred);
+    label.setFont(juce::FontOptions(15.0f));
+    label.setText(parameterName, juce::dontSendNotification);
 }
 
 void Dial::paint (juce::Graphics& g)
