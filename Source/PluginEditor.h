@@ -34,7 +34,7 @@ private:
     Dial volumeDial;
     Dial filterDial;
     
-    const juce::String pedalName {"TUBE SCREAMER"};
+    const juce::String pedalName = "TUBE SCHKREAMER";
     
     juce::Label pedalLabel {"PEDALNAME", pedalName};
     

@@ -27,7 +27,7 @@ Dial::~Dial()
 }
 
 void Dial::initSlider(juce::AudioProcessorValueTreeState& treeState, juce::String parameterId){
-    slider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+    slider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
     slider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
     
     sliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(treeState, parameterId, slider);
@@ -42,14 +42,12 @@ void Dial::initLabel(const juce::String parameterName){
 
 void Dial::paint (juce::Graphics& g)
 {
-//    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
-//    g.fillAll(juce::Colour(0, 167, 116));
 }
 
 void Dial::resized()
 {
     int sliderWidth, sliderHeight;
-    sliderWidth = sliderHeight = getWidth() / 2;
+    sliderWidth = sliderHeight = 75;
     int sliderXPos = getWidth() / 2 - sliderWidth / 2;
     int sliderYPos = getHeight() / 3;
     
@@ -59,7 +57,5 @@ void Dial::resized()
     int labelYPos = 0;
 
     slider.setBounds(sliderXPos, sliderYPos, sliderWidth, sliderHeight);
-    
-    // set label bounds
     label.setBounds(labelXPos, labelYPos, labelWidth, labelHeight);
 }

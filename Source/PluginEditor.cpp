@@ -19,9 +19,8 @@ OverdriveAudioProcessorEditor::OverdriveAudioProcessorEditor (OverdriveAudioProc
     
     pedalLabel.setColour(juce::Label::ColourIds::textColourId, juce::Colours::white);
     pedalLabel.setJustificationType(juce::Justification::centred);
-    pedalLabel.setFont(juce::FontOptions(20.0f));
+    pedalLabel.setFont(juce::FontOptions(35.0f));
     pedalLabel.setText(pedalName, juce::dontSendNotification);
-//    pedalLabel.setColour(juce::Label::ColourIds::backgroundColourId, juce::Colour(0, 167, 116));
     
     addAndMakeVisible(pedalLabel);
     addAndMakeVisible(powerSwitch);
@@ -37,19 +36,23 @@ OverdriveAudioProcessorEditor::~OverdriveAudioProcessorEditor()
 //==============================================================================
 void OverdriveAudioProcessorEditor::paint (juce::Graphics& g)
 {
-    // (Our component is opaque, so we must completely fill the background with a solid colour)
-//    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));
     g.fillAll(juce::Colour(0, 167, 116));
-
+    
+    float leftMargin = 20.0;
+    float bottomMargin = 20.0;
+    float width = getWidth() - leftMargin * 2;
+    float height = getHeight() * 0.5;
+    g.setColour(juce::Colours::white);
+    
+    g.drawRoundedRectangle(leftMargin, getBottom() - height - bottomMargin, width, height, 1, 2);
 }
 
 void OverdriveAudioProcessorEditor::resized()
 {
     int xCoor = 0;
     int yCoor = 0;
-    int dialWidth, dialHeight;
-    dialWidth = getWidth() / 2;
-    dialHeight = getHeight() / 4 + 10;
+    int dialWidth = getWidth() / 2;
+    int dialHeight = getHeight() / 4 + 10;
     pregainDial.setBounds(xCoor, yCoor, dialWidth, dialHeight);
     volumeDial.setBounds(pregainDial.getRight(), yCoor, dialWidth, dialHeight);
     filterDial.setBounds(centerWithHorizontal(dialWidth), dialHeight - 50, dialWidth, dialHeight);
