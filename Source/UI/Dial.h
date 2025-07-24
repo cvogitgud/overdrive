@@ -24,15 +24,16 @@ public:
         int radius = diameter / 2;
         int centreX = x + width / 2;
         int centreY = y + height / 2;
-        float angle = rotaryStartAngle + (sliderPos * (rotaryStartAngle - rotaryEndAngle));
-        
-        g.setColour(juce::Colours::red);
-        g.drawRect(x, y, width, height);
-        g.fillEllipse(x, y, width, height);
+        int rX = centreX - radius;
+        int rY = centreY - radius;
+        float angle = rotaryStartAngle + (sliderPos * (rotaryEndAngle - rotaryStartAngle));
+
+        g.setColour(juce::Colours::black);
+        g.fillEllipse(rX, rY, diameter, diameter);
         
         juce::Path dialTickPath;
-        dialTickPath.addRectangle(0, -radius, 10.0f, radius);
-        g.setColour(juce::Colours::black);
+        dialTickPath.addRectangle(0, -radius, 5, 10);
+        g.setColour(juce::Colours::white);
         g.fillPath(dialTickPath, juce::AffineTransform::rotation(angle).translated(centreX, centreY));
         
     }

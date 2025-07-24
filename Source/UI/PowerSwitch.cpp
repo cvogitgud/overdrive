@@ -16,6 +16,7 @@ PowerSwitch::PowerSwitch(juce::AudioProcessorValueTreeState& treeState, juce::St
 {
     buttonAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ButtonAttachment>(treeState, parameterID, button);
     button.setToggleable(true);
+    button.setColour(juce::TextButton::buttonColourId, juce::Colour(200, 192, 181));
     button.setColour(juce::TextButton::buttonOnColourId, juce::Colours::red);
     button.setClickingTogglesState(true);
     
@@ -28,17 +29,7 @@ PowerSwitch::~PowerSwitch()
 
 void PowerSwitch::paint (juce::Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+    g.fillAll (juce::Colour(200, 192, 181));
 }
 
 void PowerSwitch::resized()

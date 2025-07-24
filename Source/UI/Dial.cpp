@@ -27,7 +27,7 @@ Dial::~Dial()
 }
 
 void Dial::initSlider(juce::AudioProcessorValueTreeState& treeState, juce::String parameterId){
-    slider.setSliderStyle(juce::Slider::SliderStyle::Rotary);
+    slider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
     slider.setTextBoxStyle(juce::Slider::NoTextBox, true, 0, 0);
     
     sliderAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(treeState, parameterId, slider);
@@ -42,17 +42,8 @@ void Dial::initLabel(const juce::String parameterName){
 
 void Dial::paint (juce::Graphics& g)
 {
-    /* This demo code just fills the component's background and
-       draws some placeholder text to get you started.
-
-       You should replace everything in this method with your own
-       drawing code..
-    */
-
-    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
-
-    g.setColour (juce::Colours::grey);
-    g.drawRect (getLocalBounds(), 1);   // draw an outline around the component
+//    g.fillAll (getLookAndFeel().findColour (juce::ResizableWindow::backgroundColourId));   // clear the background
+//    g.fillAll(juce::Colour(0, 167, 116));
 }
 
 void Dial::resized()

@@ -58,20 +58,20 @@ public:
     juce::AudioProcessorValueTreeState treeState;
     
 private:
-    bool powerOn {false};
+    bool powerOn = false;
     void updatePowerOn();
     
-    float pregain {1.0f};
+    float pregain  = 1.0f;
     void updatePregain();
     
-    float highPassCutoff {70.0f};
+    const float highPassCutoff = 70.0f;
     Filter highPassFilter;
     void updateHighPassFilter();
     
     Filter lowPassFilter;
     void updateLowPassFilter();
     
-    float volume {1.0f};
+    float volume = 1.0f;
     void updateVolume();
     
     // actually this needs to be an FIR filter, not my custom IIR filter

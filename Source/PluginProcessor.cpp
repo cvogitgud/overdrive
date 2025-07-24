@@ -240,21 +240,21 @@ juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::cre
 
     const float minPregain = 1.0f;
     const float maxPregain = 20.0f;
-    const float defaultPregain = 1.0f;
+    const float defaultPregain = 5.0f;
     
     // set minFreq to highPassCutoff, in case changes to highPassCutoff are made
     // BUG: setting minFreq = highPassCutoff results in frequency == 0 when slider is at 0 position
     const float minFreq = 500.0f;
-    const float maxFreq = 22000.0f;
-    const float defaultLowPassCutoff = 8000.0f;
+    const float maxFreq = 10000.0f;
+    const float defaultLowPassCutoff = 5000.0f;
     
     auto power = std::make_unique<juce::AudioParameterBool>("POWER", "Power", true);
     
-    auto pregain = std::make_unique<juce::AudioParameterFloat>("PREGAIN", "Pre-gain", juce::NormalisableRange<float>(minPregain, maxPregain, 0.01f), defaultPregain);
+    auto pregain = std::make_unique<juce::AudioParameterFloat>("PREGAIN", "OVERDRIVE", juce::NormalisableRange<float>(minPregain, maxPregain, 0.01f), defaultPregain);
     
-    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "Low-pass Cutoff", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.3f), defaultLowPassCutoff);
+    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "TONE", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.3f), defaultLowPassCutoff);
     
-    auto volume = std::make_unique<juce::AudioParameterFloat>("VOLUME", "Volume", juce::NormalisableRange<float>(0.0f, 2.0f, 0.01f), 1.0f);
+    auto volume = std::make_unique<juce::AudioParameterFloat>("VOLUME", "LEVEL", juce::NormalisableRange<float>(0.0f, 2.0f, 0.01f), 1.0f);
     
     params.push_back(std::move(power));
     params.push_back(std::move(lowPassCutOff));
@@ -289,17 +289,16 @@ void OverdriveAudioProcessor::updateParameters (){
 }
 
 void OverdriveAudioProcessor::parameterChanged (const juce::String& parameterID, float newValue){
-//    if (parameterID.compare("LOWPASSCUTOFF") == 0){
-//        updateLowPassFilter();
-//    }
-//    else if (parameterID.compare("PREGAIN") == 0){
-//        updatePregain();
-//    }
-//    else if (parameterID.compare("VOLUME") == 0){
-//        updateVolume();
-//    }
-//    else if (parameterID.compare("POWER") == 0){
-//        updatePowerOn();
-//    }
-    updateParameters();
+    if (parameterID.compare("LOWPASSCUTOFF") == 0){
+        updateLowPassFilter();
+    }
+    else if (parameterID.compare("PREGAIN") == 0){
+        updatePregain();
+    }
+    else if (parameterID.compare("VOLUME") == 0){
+        updateVolume();
+    }
+    else if (parameterID.compare("POWER") == 0){
+        updatePowerOn();
+    }
 }

@@ -13,4 +13,3 @@
 namespace OverdriveEnums {
     enum class FilterType { Lowpass, Highpass };
 }
-
