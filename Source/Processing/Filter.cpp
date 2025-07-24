@@ -32,8 +32,8 @@ void Filter::prepareToPlay (double sampleRate, int samplesPerBlock, int numChann
     spec.numChannels = numChannels;
     
     sampleRate = sampleRate;
-    filterProcessor.prepare(spec);
     filterProcessor.reset();
+    filterProcessor.prepare(spec);
 }
 
 void Filter::process (juce::AudioBuffer<float>& buffer){

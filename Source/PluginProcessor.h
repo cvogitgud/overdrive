@@ -74,8 +74,8 @@ private:
     float volume = 1.0f;
     void updateVolume();
     
-    // actually this needs to be an FIR filter, not my custom IIR filter
-    Filter antiAliasingFilter;
+    // anti-aliasing
+    juce::dsp::ProcessorDuplicator<juce::dsp::FIR::Filter<float>, juce::dsp::FIR::Coefficients<float>> antiAliasingFilter;
     
     float udoDistortion(float input);
     

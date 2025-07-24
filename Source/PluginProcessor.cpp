@@ -23,7 +23,7 @@ OverdriveAudioProcessor::OverdriveAudioProcessor()
                      #endif
                        ), treeState(*this, nullptr, "PARAMS", createParameterLayout()), highPassFilter(OverdriveEnums::FilterType::Highpass),
                            lowPassFilter(OverdriveEnums::FilterType::Lowpass),
-                           antiAliasingFilter(OverdriveEnums::FilterType::Lowpass)
+                           antiAliasingFilter(juce::dsp::FilterDesign<float>::designFIRLowpassWindowMethod(10000.0f, 44000.0f, 21, juce::dsp::WindowingFunction<float>::hamming))
 #endif
 {
     treeState.addParameterListener("POWER", this);
@@ -113,10 +113,11 @@ void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     
     highPassFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
     lowPassFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
-    antiAliasingFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
     
     highPassFilter.updateCutoff(highPassCutoff);
-    antiAliasingFilter.updateCutoff(sampleRate/4);
+    
+    antiAliasingFilter.reset();
+    antiAliasingFilter.prepare(spec);
     updateParameters();
 }
 
@@ -157,6 +158,8 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
+    
+    // should i use processcontextreplacing for highPassFilter and lowPassFilter too?
 
     // Clears buffer
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
@@ -166,8 +169,9 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         juce::dsp::AudioBlock<float> block {buffer};
 
         highPassFilter.process(buffer);
-        //    antiAliasingFilter.process(buffer);
-
+        
+        antiAliasingFilter.process(juce::dsp::ProcessContextReplacing<float> (block));
+        
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
             auto* channelData = buffer.getWritePointer (channel);
@@ -239,8 +243,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::cre
     
 
     const float minPregain = 1.0f;
-    const float maxPregain = 20.0f;
-    const float defaultPregain = 5.0f;
+    const float maxPregain = 50.0f;
+    const float defaultPregain = 10.0f;
     
     // set minFreq to highPassCutoff, in case changes to highPassCutoff are made
     // BUG: setting minFreq = highPassCutoff results in frequency == 0 when slider is at 0 position
@@ -248,13 +252,17 @@ juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::cre
     const float maxFreq = 10000.0f;
     const float defaultLowPassCutoff = 5000.0f;
     
+    const float minVolume = 0.0f;
+    const float maxVolume = 2.0f;
+    const float defaultVolume = 0.8f;
+    
     auto power = std::make_unique<juce::AudioParameterBool>("POWER", "Power", true);
     
     auto pregain = std::make_unique<juce::AudioParameterFloat>("PREGAIN", "OVERDRIVE", juce::NormalisableRange<float>(minPregain, maxPregain, 0.01f), defaultPregain);
     
     auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "TONE", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.3f), defaultLowPassCutoff);
     
-    auto volume = std::make_unique<juce::AudioParameterFloat>("VOLUME", "LEVEL", juce::NormalisableRange<float>(0.0f, 2.0f, 0.01f), 1.0f);
+    auto volume = std::make_unique<juce::AudioParameterFloat>("VOLUME", "LEVEL", juce::NormalisableRange<float>(minVolume, maxVolume, 0.01f), defaultVolume);
     
     params.push_back(std::move(power));
     params.push_back(std::move(lowPassCutOff));
