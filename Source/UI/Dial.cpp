@@ -15,9 +15,9 @@
 Dial::Dial(juce::AudioProcessorValueTreeState& treeState, juce::String parameterId, juce::String parameterName)
 {
     initSlider(treeState, parameterId);
-//    slider.setLookAndFeel(&dialStyle);
+    slider.setLookAndFeel(&dialStyle);
     addAndMakeVisible(slider);
-    
+
     initLabel(parameterName);
     addAndMakeVisible(label);
 }
@@ -42,6 +42,8 @@ void Dial::initLabel(const juce::String parameterName){
 
 void Dial::paint (juce::Graphics& g)
 {
+    g.setColour(juce::Colours::white);
+    g.drawRect(0, 0, getWidth(), getHeight());
 }
 
 void Dial::resized()
@@ -58,4 +60,10 @@ void Dial::resized()
 
     slider.setBounds(sliderXPos, sliderYPos, sliderWidth, sliderHeight);
     label.setBounds(labelXPos, labelYPos, labelWidth, labelHeight);
+}
+
+bool Dial::hitTest(int x, int y) {
+    bool withinSliderHorizontal = slider.getX() <= x && x <= slider.getRight();
+    bool withinSliderVertical = slider.getY() <= y && y <= slider.getBottom();
+    return withinSliderHorizontal && withinSliderVertical;
 }

@@ -111,6 +111,11 @@ void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     spec.maximumBlockSize = samplesPerBlock;
     spec.numChannels = getTotalNumOutputChannels();
     
+    pregain.reset();
+    pregain.prepare(spec);
+    pregain.setRampDurationSeconds(0.02f);
+    pregain.setGainLinear(treeState.getRawParameterValue("PREGAIN")->load());
+    
     highPassFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
     lowPassFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
     
@@ -118,6 +123,11 @@ void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     
     antiAliasingFilter.reset();
     antiAliasingFilter.prepare(spec);
+    
+    volume.reset();
+    volume.prepare(spec);
+    volume.setRampDurationSeconds(0.02f);
+    volume.setGainLinear(treeState.getRawParameterValue("VOLUME")->load());
     updateParameters();
 }
 
@@ -167,19 +177,20 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
         juce::dsp::AudioBlock<float> block {buffer};
 
         highPassFilter.process(buffer);
-        
         antiAliasingFilter.process(juce::dsp::ProcessContextReplacing<float> (block));
+        pregain.process(juce::dsp::ProcessContextReplacing<float> (block));
         
         for (int channel = 0; channel < totalNumInputChannels; ++channel)
         {
             auto* channelData = buffer.getWritePointer (channel);
 
             for (int sample = 0; sample < block.getNumSamples(); ++sample){
-                float input = channelData[sample] * pregain;
-                channelData[sample] = udoDistortion(input) * volume;
+                float input = channelData[sample];
+                channelData[sample] = udoDistortion(input);
             }
         }
-
+        
+        volume.process(juce::dsp::ProcessContextReplacing<float> (block));
         lowPassFilter.process(buffer);
     }
 }
@@ -208,8 +219,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::cre
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
     const float minPregain = 1.0f;
-    const float maxPregain = 50.0f;
-    const float defaultPregain = 10.0f;
+    const float maxPregain = 2.0f;
+    const float defaultPregain = 0.8f;
     
     const float minFreq = 70.0f;
     const float maxFreq = 10000.0f;
@@ -240,7 +251,7 @@ void OverdriveAudioProcessor::updatePowerOn(){
 }
     
 void OverdriveAudioProcessor::updatePregain (){
-    pregain = treeState.getRawParameterValue("PREGAIN")->load();
+    pregain.setGainLinear(treeState.getRawParameterValue("PREGAIN")->load());
 }
 
 void OverdriveAudioProcessor::updateLowPassFilter (){
@@ -249,7 +260,7 @@ void OverdriveAudioProcessor::updateLowPassFilter (){
 }
 
 void OverdriveAudioProcessor::updateVolume (){
-    volume = treeState.getRawParameterValue("VOLUME")->load();
+    volume.setGainLinear(treeState.getRawParameterValue("VOLUME")->load());
 }
 
 void OverdriveAudioProcessor::updateParameters (){
@@ -284,6 +295,7 @@ bool OverdriveAudioProcessor::hasEditor() const
 juce::AudioProcessorEditor* OverdriveAudioProcessor::createEditor()
 {
     return new OverdriveAudioProcessorEditor (*this);
+//    return new juce::GenericAudioProcessorEditor (*this);
 }
 
 //==============================================================================

@@ -22,11 +22,11 @@ OverdriveAudioProcessorEditor::OverdriveAudioProcessorEditor (OverdriveAudioProc
     pedalLabel.setFont(juce::FontOptions(30.0f));
     pedalLabel.setText(pedalName, juce::dontSendNotification);
     
-    addAndMakeVisible(pedalLabel);
     addAndMakeVisible(powerSwitch);
     addAndMakeVisible(pregainDial);
-    addAndMakeVisible(filterDial);
     addAndMakeVisible(volumeDial);
+    addAndMakeVisible(filterDial);
+    addAndMakeVisible(pedalLabel);
 }
 
 OverdriveAudioProcessorEditor::~OverdriveAudioProcessorEditor()
@@ -62,7 +62,7 @@ void OverdriveAudioProcessorEditor::resized()
     int powerSwitchX = centerWithHorizontal(powerSwitchWidth);
     int powerSwitchY = getHeight() * 2.0f/3;
     powerSwitch.setBounds(powerSwitchX, powerSwitchY, powerSwitchWidth, powerSwitchHeight);
-    
+
     int labelWidth = getWidth();
     int labelHeight = powerSwitch.getY() - filterDial.getBottom();
     int labelX = centerWithHorizontal(labelWidth);
