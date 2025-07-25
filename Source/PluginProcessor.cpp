@@ -295,7 +295,6 @@ bool OverdriveAudioProcessor::hasEditor() const
 juce::AudioProcessorEditor* OverdriveAudioProcessor::createEditor()
 {
     return new OverdriveAudioProcessorEditor (*this);
-//    return new juce::GenericAudioProcessorEditor (*this);
 }
 
 //==============================================================================
