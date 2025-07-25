@@ -19,7 +19,7 @@ OverdriveAudioProcessorEditor::OverdriveAudioProcessorEditor (OverdriveAudioProc
     
     pedalLabel.setColour(juce::Label::ColourIds::textColourId, juce::Colours::white);
     pedalLabel.setJustificationType(juce::Justification::centred);
-    pedalLabel.setFont(juce::FontOptions(35.0f));
+    pedalLabel.setFont(juce::FontOptions(30.0f));
     pedalLabel.setText(pedalName, juce::dontSendNotification);
     
     addAndMakeVisible(pedalLabel);

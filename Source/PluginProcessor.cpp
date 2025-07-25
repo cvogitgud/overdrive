@@ -158,8 +158,6 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
     auto totalNumOutputChannels = getTotalNumOutputChannels();
-    
-    // should i use processcontextreplacing for highPassFilter and lowPassFilter too?
 
     // Clears buffer
     for (auto i = totalNumInputChannels; i < totalNumOutputChannels; ++i)
@@ -206,49 +204,14 @@ float OverdriveAudioProcessor::udoDistortion(float input){
     return output;
 }
 
-//==============================================================================
-bool OverdriveAudioProcessor::hasEditor() const
-{
-    return true; // (change this to false if you choose to not supply an editor)
-}
-
-juce::AudioProcessorEditor* OverdriveAudioProcessor::createEditor()
-{
-    return new OverdriveAudioProcessorEditor (*this);
-}
-
-//==============================================================================
-void OverdriveAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
-{
-    // You should use this method to store your parameters in the memory block.
-    // You could do that either as raw data, or use the XML or ValueTree classes
-    // as intermediaries to make it easy to save and load complex data.
-}
-
-void OverdriveAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
-{
-    // You should use this method to restore your parameters from this memory block,
-    // whose contents will have been created by the getStateInformation() call.
-}
-
-//==============================================================================
-// This creates new instances of the plugin..
-juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
-{
-    return new OverdriveAudioProcessor();
-}
-
 juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::createParameterLayout (){
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
-
     const float minPregain = 1.0f;
     const float maxPregain = 50.0f;
     const float defaultPregain = 10.0f;
     
-    // set minFreq to highPassCutoff, in case changes to highPassCutoff are made
-    // BUG: setting minFreq = highPassCutoff results in frequency == 0 when slider is at 0 position
-    const float minFreq = 500.0f;
+    const float minFreq = 70.0f;
     const float maxFreq = 10000.0f;
     const float defaultLowPassCutoff = 5000.0f;
     
@@ -265,8 +228,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::cre
     auto volume = std::make_unique<juce::AudioParameterFloat>("VOLUME", "LEVEL", juce::NormalisableRange<float>(minVolume, maxVolume, 0.01f), defaultVolume);
     
     params.push_back(std::move(power));
-    params.push_back(std::move(lowPassCutOff));
     params.push_back(std::move(pregain));
+    params.push_back(std::move(lowPassCutOff));
     params.push_back(std::move(volume));
     
     return {params.begin(), params.end()};
@@ -297,11 +260,11 @@ void OverdriveAudioProcessor::updateParameters (){
 }
 
 void OverdriveAudioProcessor::parameterChanged (const juce::String& parameterID, float newValue){
-    if (parameterID.compare("LOWPASSCUTOFF") == 0){
-        updateLowPassFilter();
-    }
-    else if (parameterID.compare("PREGAIN") == 0){
+    if (parameterID.compare("PREGAIN") == 0){
         updatePregain();
+    }
+    else if (parameterID.compare("LOWPASSCUTOFF") == 0){
+        updateLowPassFilter();
     }
     else if (parameterID.compare("VOLUME") == 0){
         updateVolume();
@@ -309,4 +272,37 @@ void OverdriveAudioProcessor::parameterChanged (const juce::String& parameterID,
     else if (parameterID.compare("POWER") == 0){
         updatePowerOn();
     }
+}
+
+
+//==============================================================================
+bool OverdriveAudioProcessor::hasEditor() const
+{
+    return true; // (change this to false if you choose to not supply an editor)
+}
+
+juce::AudioProcessorEditor* OverdriveAudioProcessor::createEditor()
+{
+    return new OverdriveAudioProcessorEditor (*this);
+}
+
+//==============================================================================
+void OverdriveAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+{
+    // You should use this method to store your parameters in the memory block.
+    // You could do that either as raw data, or use the XML or ValueTree classes
+    // as intermediaries to make it easy to save and load complex data.
+}
+
+void OverdriveAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+{
+    // You should use this method to restore your parameters from this memory block,
+    // whose contents will have been created by the getStateInformation() call.
+}
+
+//==============================================================================
+// This creates new instances of the plugin..
+juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
+{
+    return new OverdriveAudioProcessor();
 }

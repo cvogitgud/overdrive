@@ -15,7 +15,7 @@
 Dial::Dial(juce::AudioProcessorValueTreeState& treeState, juce::String parameterId, juce::String parameterName)
 {
     initSlider(treeState, parameterId);
-    slider.setLookAndFeel(&dialStyle);
+//    slider.setLookAndFeel(&dialStyle);
     addAndMakeVisible(slider);
     
     initLabel(parameterName);
