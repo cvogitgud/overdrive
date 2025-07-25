@@ -7,11 +7,13 @@ It uses the Schetzen Formula for symmetrical soft clipping, and follows the basi
 
 Essentially it's
 1. Low pass filter (IIR) to clean up lows before distortion produces muddy lows
-2. Anti-Aliasing using a fixed high pass FIR filter attenuate input frequencies above ~10kHz.
+2. Anti-Aliasing using a fixed high pass FIR filter attenuate input frequencies above ~10kHz
 3. Distortion algorithm - Schetzen Formula
 5. High pass filter (IIR) for harsh post-distortion high frequencies
 
 
 <h2>Planned Changes</h2>
-1. Make a dedicated Distortion module to practice dealing with types and modularity.
-2. Add a bug fixes section to the README :)
+<ol>
+  <li>Create and add distortion module class to abstract processing and practice modularity</li>
+  <li>Add Bug page to README</li>
+</ol>
