@@ -48,6 +48,8 @@ public:
 
     void paint (juce::Graphics&) override;
     void resized() override;
+    
+    bool hitTest(int x, int y) override;
 
 private:
     DialLookAndFeel dialStyle;

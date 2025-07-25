@@ -61,7 +61,7 @@ private:
     bool powerOn = false;
     void updatePowerOn();
     
-    float pregain  = 1.0f;
+    juce::dsp::Gain<float> pregain;
     void updatePregain();
     
     const float highPassCutoff = 70.0f;
@@ -71,11 +71,12 @@ private:
     Filter lowPassFilter;
     void updateLowPassFilter();
     
-    float volume = 1.0f;
+    juce::dsp::Gain<float> volume;
     void updateVolume();
     
-    // anti-aliasing
-    juce::dsp::ProcessorDuplicator<juce::dsp::FIR::Filter<float>, juce::dsp::FIR::Coefficients<float>> antiAliasingFilter;
+    using Filter = juce::dsp::FIR::Filter<float>;
+    using Coefficients = juce::dsp::FIR::Coefficients<float>;
+    juce::dsp::ProcessorDuplicator<Filter, Coefficients> antiAliasingFilter;
     
     float udoDistortion(float input);
     
