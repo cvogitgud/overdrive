@@ -42,8 +42,6 @@ void Dial::initLabel(const juce::String parameterName){
 
 void Dial::paint (juce::Graphics& g)
 {
-    g.setColour(juce::Colours::white);
-    g.drawRect(0, 0, getWidth(), getHeight());
 }
 
 void Dial::resized()

@@ -219,8 +219,8 @@ juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::cre
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
     const float minPregain = 1.0f;
-    const float maxPregain = 2.0f;
-    const float defaultPregain = 0.8f;
+    const float maxPregain = 30.0f;
+    const float defaultPregain = 5.0f;
     
     const float minFreq = 70.0f;
     const float maxFreq = 10000.0f;
