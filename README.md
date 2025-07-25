@@ -15,5 +15,6 @@ Essentially it's
 <h2>Planned Changes</h2>
 <ol>
   <li>Create and add distortion module class to abstract processing and practice modularity</li>
+  <li>Make AU version for macOS</li>
   <li>Add Bug page to README</li>
 </ol>
