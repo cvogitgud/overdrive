@@ -11,7 +11,7 @@
 
 //==============================================================================
 OverdriveAudioProcessorEditor::OverdriveAudioProcessorEditor (OverdriveAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p), powerSwitch(audioProcessor.treeState, "POWER"), pregainDial(audioProcessor.treeState, "PREGAIN", "OVERDRIVE"), volumeDial(audioProcessor.treeState, "VOLUME", "LEVEL"), filterDial(audioProcessor.treeState, "LOWPASSCUTOFF", "TONE") 
+    : AudioProcessorEditor (&p), audioProcessor (p), powerSwitch(audioProcessor.treeState, "POWER"), pregainDial(audioProcessor.treeState, "PREGAIN", "OVERDRIVE"), volumeDial(audioProcessor.treeState, "VOLUME", "LEVEL"), filterDial(audioProcessor.treeState, "LOWPASSCUTOFF", "TONE"), powerLED(juce::Colours::red)
 {
     int width = 300;
     int height = width * 7/5;
@@ -27,6 +27,9 @@ OverdriveAudioProcessorEditor::OverdriveAudioProcessorEditor (OverdriveAudioProc
     addAndMakeVisible(volumeDial);
     addAndMakeVisible(filterDial);
     addAndMakeVisible(pedalLabel);
+    addAndMakeVisible(powerLED);
+    
+    powerSwitch.getButton().onClick = [this] { togglePowerLED(); };
 }
 
 OverdriveAudioProcessorEditor::~OverdriveAudioProcessorEditor()
@@ -68,6 +71,20 @@ void OverdriveAudioProcessorEditor::resized()
     int labelX = centerWithHorizontal(labelWidth);
     int labelY = filterDial.getBottom();
     pedalLabel.setBounds(labelX, labelY, labelWidth, labelHeight);
+    
+    int ledRadius = 10.0f;
+    powerLED.setBounds(getWidth() / 2 - ledRadius / 2, 25, ledRadius, ledRadius);
+}
+
+void OverdriveAudioProcessorEditor::togglePowerLED(){
+    // change colour and call repaint PowerLED
+    if (powerSwitch.getButton().getToggleState() == true){
+        powerLED.setLEDColour(juce::Colours::red);
+    }
+    else{
+        powerLED.setLEDColour(juce::Colour(182,182,182).brighter(0.4f));
+    }
+    powerLED.repaint();
 }
 
 const int OverdriveAudioProcessorEditor::centerWithHorizontal(const int componentWidth){

@@ -19,6 +19,8 @@
       <GROUP id="{0604D481-0F4E-4BFD-8B69-A7DF75EA5C20}" name="UI">
         <FILE id="dJUrSF" name="Dial.cpp" compile="1" resource="0" file="Source/UI/Dial.cpp"/>
         <FILE id="NZGW2c" name="Dial.h" compile="0" resource="0" file="Source/UI/Dial.h"/>
+        <FILE id="Sg30Nj" name="PowerLED.cpp" compile="1" resource="0" file="Source/UI/PowerLED.cpp"/>
+        <FILE id="JAUUbU" name="PowerLED.h" compile="0" resource="0" file="Source/UI/PowerLED.h"/>
         <FILE id="MX6pJg" name="PowerSwitch.cpp" compile="1" resource="0" file="Source/UI/PowerSwitch.cpp"/>
         <FILE id="JlSxJf" name="PowerSwitch.h" compile="0" resource="0" file="Source/UI/PowerSwitch.h"/>
       </GROUP>
