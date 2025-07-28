@@ -12,6 +12,7 @@
 #include "PluginProcessor.h"
 #include "UI/Dial.h"
 #include "UI/PowerSwitch.h"
+#include "UI/PowerLED.h"
 
 //==============================================================================
 /**
@@ -25,6 +26,7 @@ public:
     //==============================================================================
     void paint (juce::Graphics&) override;
     void resized() override;
+    void togglePowerLED();
 
 private:
     OverdriveAudioProcessor& audioProcessor;
@@ -35,10 +37,11 @@ private:
     Dial filterDial;
     
     const juce::String pedalName = "TUBE SCHKREAMER";
-    
     juce::Label pedalLabel {"PEDALNAME", pedalName};
     
     const int centerWithHorizontal(const int componentWidth);
-
+    
+    PowerLED powerLED;
+    
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OverdriveAudioProcessorEditor)
 };
