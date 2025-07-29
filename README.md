@@ -8,10 +8,10 @@ It uses the Schetzen Formula for symmetrical soft clipping, and follows the basi
 Download is easy, just download the TubeSchkreamer.pkg file and it make sure you're downloading it in the right destinations for your DAW to find it. At the moment, only VST3 and AU versions are available, but maybe I'll build the Standalone Plugin as well.
 
 
-Under macOS, the default destinations are 
+For macOS, the default destinations are 
 <ul>
-  <li> <strong>~Library/Audio/Plug-Ins/VST3</strong> for VST3</li>
-  <li> <strong>~Library/Audio/Plug-Ins/Components</strong> for AU</li>
+  <li> <code>~Library/Audio/Plug-Ins/VST3</code> for VST3</li>
+  <li> <code>~Library/Audio/Plug-Ins/Components</code> for AU</li>
 </ul>
 If you happen to be on Windows and it doesn't end up in the right folders, I suggest creating a new folder for the builds to download into, and then dragging the VST3 to your DAW's plug-in folder.
 
@@ -22,13 +22,7 @@ Essentially it's
 3. Distortion algorithm - Schetzen Formula
 5. High pass filter (IIR) for harsh post-distortion high frequencies
 
-
-<h2>Planned Changes</h2>
-<ol>
-  <li>Create and add distortion module class to abstract processing and practice modularity</li>
-  <li>Make AU version for macOS</li>
-  <li>Add Bug page to README</li>
-</ol>
+Happy playing!
 
 
 <h2>Contact</h2>
