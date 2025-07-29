@@ -17,11 +17,11 @@
 //==============================================================================
 /**
 */
-class OverdriveAudioProcessorEditor  : public juce::AudioProcessorEditor
+class TubeSchkreamerAudioProcessorEditor  : public juce::AudioProcessorEditor
 {
 public:
-    OverdriveAudioProcessorEditor (OverdriveAudioProcessor&);
-    ~OverdriveAudioProcessorEditor() override;
+    TubeSchkreamerAudioProcessorEditor (TubeSchkreamerAudioProcessor&);
+    ~TubeSchkreamerAudioProcessorEditor() override;
 
     //==============================================================================
     void paint (juce::Graphics&) override;
@@ -29,7 +29,7 @@ public:
     void togglePowerLED();
 
 private:
-    OverdriveAudioProcessor& audioProcessor;
+    TubeSchkreamerAudioProcessor& audioProcessor;
 
     PowerSwitch powerSwitch;
     Dial pregainDial;
@@ -43,5 +43,5 @@ private:
     
     PowerLED powerLED;
     
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OverdriveAudioProcessorEditor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TubeSchkreamerAudioProcessorEditor)
 };

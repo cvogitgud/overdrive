@@ -10,13 +10,13 @@
 
 #include "Filter.h"
 
-Filter::Filter(OverdriveEnums::FilterType type){
+Filter::Filter(TubeSchkreamerEnums::FilterType type){
     filterType = type;
     switch (filterType){
-        case OverdriveEnums::FilterType::Lowpass:
+        case TubeSchkreamerEnums::FilterType::Lowpass:
             *filterProcessor.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, maxFreq, resonance);
             break;
-        case OverdriveEnums::FilterType::Highpass:
+        case TubeSchkreamerEnums::FilterType::Highpass:
             *filterProcessor.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, maxFreq, resonance);
             break;
         default:
@@ -43,10 +43,10 @@ void Filter::process (juce::AudioBuffer<float>& buffer){
 
 void Filter::updateCutoff (const float cutoff){
     switch (filterType){
-        case OverdriveEnums::FilterType::Lowpass:
+        case TubeSchkreamerEnums::FilterType::Lowpass:
             *filterProcessor.state = *juce::dsp::IIR::Coefficients<float>::makeLowPass(sampleRate, cutoff, resonance);
             break;
-        case OverdriveEnums::FilterType::Highpass:
+        case TubeSchkreamerEnums::FilterType::Highpass:
             *filterProcessor.state = *juce::dsp::IIR::Coefficients<float>::makeHighPass(sampleRate, cutoff, resonance);
             break;
         default:

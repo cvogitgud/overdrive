@@ -15,12 +15,12 @@
 //==============================================================================
 /**
 */
-class OverdriveAudioProcessor  : public juce::AudioProcessor, public juce::AudioProcessorValueTreeState::Listener
+class TubeSchkreamerAudioProcessor  : public juce::AudioProcessor, public juce::AudioProcessorValueTreeState::Listener
 {
 public:
     //==============================================================================
-    OverdriveAudioProcessor();
-    ~OverdriveAudioProcessor() override;
+    TubeSchkreamerAudioProcessor();
+    ~TubeSchkreamerAudioProcessor() override;
 
     //==============================================================================
     void prepareToPlay (double sampleRate, int samplesPerBlock) override;
@@ -85,5 +85,5 @@ private:
     void updateParameters ();
     
     //==============================================================================
-    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (OverdriveAudioProcessor)
+    JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (TubeSchkreamerAudioProcessor)
 };

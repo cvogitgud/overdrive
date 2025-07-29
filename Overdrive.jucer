@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<JUCERPROJECT id="oTcKpF" name="Overdrive" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildStandalone,buildVST3">
-  <MAINGROUP id="ycmkFN" name="Overdrive">
+<JUCERPROJECT id="oTcKpF" name="TubeSchkreamer" projectType="audioplug" useAppConfig="0"
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" pluginFormats="buildAU,buildStandalone,buildVST3">
+  <MAINGROUP id="ycmkFN" name="TubeSchkreamer">
     <GROUP id="{B4D815E5-B211-5F6A-7E59-ECC55E314B34}" name="Source">
       <FILE id="axYnIA" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>

@@ -10,7 +10,7 @@
 #include "PluginEditor.h"
 
 //==============================================================================
-OverdriveAudioProcessorEditor::OverdriveAudioProcessorEditor (OverdriveAudioProcessor& p)
+TubeSchkreamerAudioProcessorEditor::TubeSchkreamerAudioProcessorEditor (TubeSchkreamerAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p), powerSwitch(audioProcessor.treeState, "POWER"), pregainDial(audioProcessor.treeState, "PREGAIN", "OVERDRIVE"), volumeDial(audioProcessor.treeState, "VOLUME", "LEVEL"), filterDial(audioProcessor.treeState, "LOWPASSCUTOFF", "TONE"), powerLED(juce::Colours::red)
 {
     int width = 300;
@@ -32,12 +32,12 @@ OverdriveAudioProcessorEditor::OverdriveAudioProcessorEditor (OverdriveAudioProc
     powerSwitch.getButton().onClick = [this] { togglePowerLED(); };
 }
 
-OverdriveAudioProcessorEditor::~OverdriveAudioProcessorEditor()
+TubeSchkreamerAudioProcessorEditor::~TubeSchkreamerAudioProcessorEditor()
 {
 }
 
 //==============================================================================
-void OverdriveAudioProcessorEditor::paint (juce::Graphics& g)
+void TubeSchkreamerAudioProcessorEditor::paint (juce::Graphics& g)
 {
     g.fillAll(juce::Colour(0, 167, 116));
     
@@ -50,7 +50,7 @@ void OverdriveAudioProcessorEditor::paint (juce::Graphics& g)
     g.drawRoundedRectangle(leftMargin, getBottom() - height - bottomMargin, width, height, 1, 2);
 }
 
-void OverdriveAudioProcessorEditor::resized()
+void TubeSchkreamerAudioProcessorEditor::resized()
 {
     int xCoor = 0;
     int yCoor = 0;
@@ -76,7 +76,7 @@ void OverdriveAudioProcessorEditor::resized()
     powerLED.setBounds(getWidth() / 2 - ledRadius / 2, 25, ledRadius, ledRadius);
 }
 
-void OverdriveAudioProcessorEditor::togglePowerLED(){
+void TubeSchkreamerAudioProcessorEditor::togglePowerLED(){
     // change colour and call repaint PowerLED
     if (powerSwitch.getButton().getToggleState() == true){
         powerLED.setLEDColour(juce::Colours::red);
@@ -87,6 +87,6 @@ void OverdriveAudioProcessorEditor::togglePowerLED(){
     powerLED.repaint();
 }
 
-const int OverdriveAudioProcessorEditor::centerWithHorizontal(const int componentWidth){
+const int TubeSchkreamerAudioProcessorEditor::centerWithHorizontal(const int componentWidth){
     return getWidth() / 2 - componentWidth / 2;
 }

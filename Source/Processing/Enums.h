@@ -10,6 +10,6 @@
 
 #pragma once
 
-namespace OverdriveEnums {
+namespace TubeSchkreamerEnums {
     enum class FilterType { Lowpass, Highpass };
 }

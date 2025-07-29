@@ -12,7 +12,7 @@
 #include <iostream>
 
 //==============================================================================
-OverdriveAudioProcessor::OverdriveAudioProcessor()
+TubeSchkreamerAudioProcessor::TubeSchkreamerAudioProcessor()
 #ifndef JucePlugin_PreferredChannelConfigurations
      : AudioProcessor (BusesProperties()
                      #if ! JucePlugin_IsMidiEffect
@@ -21,8 +21,8 @@ OverdriveAudioProcessor::OverdriveAudioProcessor()
                       #endif
                        .withOutput ("Output", juce::AudioChannelSet::stereo(), true)
                      #endif
-                       ), treeState(*this, nullptr, "PARAMS", createParameterLayout()), highPassFilter(OverdriveEnums::FilterType::Highpass),
-                           lowPassFilter(OverdriveEnums::FilterType::Lowpass),
+                       ), treeState(*this, nullptr, "PARAMS", createParameterLayout()), highPassFilter(TubeSchkreamerEnums::FilterType::Highpass),
+                           lowPassFilter(TubeSchkreamerEnums::FilterType::Lowpass),
                            antiAliasingFilter(juce::dsp::FilterDesign<float>::designFIRLowpassWindowMethod(10000.0f, 44000.0f, 21, juce::dsp::WindowingFunction<float>::hamming))
 #endif
 {
@@ -33,7 +33,7 @@ OverdriveAudioProcessor::OverdriveAudioProcessor()
     
 }
 
-OverdriveAudioProcessor::~OverdriveAudioProcessor()
+TubeSchkreamerAudioProcessor::~TubeSchkreamerAudioProcessor()
 {
     treeState.addParameterListener("POWER", this);
     treeState.removeParameterListener("PREGAIN", this);
@@ -42,12 +42,12 @@ OverdriveAudioProcessor::~OverdriveAudioProcessor()
 }
 
 //==============================================================================
-const juce::String OverdriveAudioProcessor::getName() const
+const juce::String TubeSchkreamerAudioProcessor::getName() const
 {
     return JucePlugin_Name;
 }
 
-bool OverdriveAudioProcessor::acceptsMidi() const
+bool TubeSchkreamerAudioProcessor::acceptsMidi() const
 {
    #if JucePlugin_WantsMidiInput
     return true;
@@ -56,7 +56,7 @@ bool OverdriveAudioProcessor::acceptsMidi() const
    #endif
 }
 
-bool OverdriveAudioProcessor::producesMidi() const
+bool TubeSchkreamerAudioProcessor::producesMidi() const
 {
    #if JucePlugin_ProducesMidiOutput
     return true;
@@ -65,7 +65,7 @@ bool OverdriveAudioProcessor::producesMidi() const
    #endif
 }
 
-bool OverdriveAudioProcessor::isMidiEffect() const
+bool TubeSchkreamerAudioProcessor::isMidiEffect() const
 {
    #if JucePlugin_IsMidiEffect
     return true;
@@ -74,37 +74,37 @@ bool OverdriveAudioProcessor::isMidiEffect() const
    #endif
 }
 
-double OverdriveAudioProcessor::getTailLengthSeconds() const
+double TubeSchkreamerAudioProcessor::getTailLengthSeconds() const
 {
     return 0.0;
 }
 
-int OverdriveAudioProcessor::getNumPrograms()
+int TubeSchkreamerAudioProcessor::getNumPrograms()
 {
     return 1;   // NB: some hosts don't cope very well if you tell them there are 0 programs,
                 // so this should be at least 1, even if you're not really implementing programs.
 }
 
-int OverdriveAudioProcessor::getCurrentProgram()
+int TubeSchkreamerAudioProcessor::getCurrentProgram()
 {
     return 0;
 }
 
-void OverdriveAudioProcessor::setCurrentProgram (int index)
+void TubeSchkreamerAudioProcessor::setCurrentProgram (int index)
 {
 }
 
-const juce::String OverdriveAudioProcessor::getProgramName (int index)
+const juce::String TubeSchkreamerAudioProcessor::getProgramName (int index)
 {
     return {};
 }
 
-void OverdriveAudioProcessor::changeProgramName (int index, const juce::String& newName)
+void TubeSchkreamerAudioProcessor::changeProgramName (int index, const juce::String& newName)
 {
 }
 
 //==============================================================================
-void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
+void TubeSchkreamerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
@@ -131,14 +131,14 @@ void OverdriveAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBl
     updateParameters();
 }
 
-void OverdriveAudioProcessor::releaseResources()
+void TubeSchkreamerAudioProcessor::releaseResources()
 {
     // When playback stops, you can use this as an opportunity to free up any
     // spare memory, etc.
 }
 
 #ifndef JucePlugin_PreferredChannelConfigurations
-bool OverdriveAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
+bool TubeSchkreamerAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts) const
 {
   #if JucePlugin_IsMidiEffect
     juce::ignoreUnused (layouts);
@@ -163,7 +163,7 @@ bool OverdriveAudioProcessor::isBusesLayoutSupported (const BusesLayout& layouts
 }
 #endif
 
-void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
+void TubeSchkreamerAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages)
 {
     juce::ScopedNoDenormals noDenormals;
     auto totalNumInputChannels  = getTotalNumInputChannels();
@@ -195,7 +195,7 @@ void OverdriveAudioProcessor::processBlock (juce::AudioBuffer<float>& buffer, ju
     }
 }
 
-float OverdriveAudioProcessor::udoDistortion(float input){
+float TubeSchkreamerAudioProcessor::udoDistortion(float input){
     float output = 0.0f;
     float absInput = std::fabs(input);
     float signInput = (input >= 0) ? 1.0f : -1.0f;
@@ -215,7 +215,7 @@ float OverdriveAudioProcessor::udoDistortion(float input){
     return output;
 }
 
-juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::createParameterLayout (){
+juce::AudioProcessorValueTreeState::ParameterLayout TubeSchkreamerAudioProcessor::createParameterLayout (){
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
     const float minPregain = 1.0f;
@@ -246,31 +246,31 @@ juce::AudioProcessorValueTreeState::ParameterLayout OverdriveAudioProcessor::cre
     return {params.begin(), params.end()};
 }
     
-void OverdriveAudioProcessor::updatePowerOn(){
+void TubeSchkreamerAudioProcessor::updatePowerOn(){
     powerOn = treeState.getRawParameterValue("POWER")->load();
 }
     
-void OverdriveAudioProcessor::updatePregain (){
+void TubeSchkreamerAudioProcessor::updatePregain (){
     pregain.setGainLinear(treeState.getRawParameterValue("PREGAIN")->load());
 }
 
-void OverdriveAudioProcessor::updateLowPassFilter (){
+void TubeSchkreamerAudioProcessor::updateLowPassFilter (){
     const float lowPassCutoff = treeState.getRawParameterValue("LOWPASSCUTOFF")->load();
     lowPassFilter.updateCutoff(lowPassCutoff);
 }
 
-void OverdriveAudioProcessor::updateVolume (){
+void TubeSchkreamerAudioProcessor::updateVolume (){
     volume.setGainLinear(treeState.getRawParameterValue("VOLUME")->load());
 }
 
-void OverdriveAudioProcessor::updateParameters (){
+void TubeSchkreamerAudioProcessor::updateParameters (){
     updatePowerOn();
     updatePregain();
     updateVolume();
     updateLowPassFilter();
 }
 
-void OverdriveAudioProcessor::parameterChanged (const juce::String& parameterID, float newValue){
+void TubeSchkreamerAudioProcessor::parameterChanged (const juce::String& parameterID, float newValue){
     if (parameterID.compare("PREGAIN") == 0){
         updatePregain();
     }
@@ -287,25 +287,25 @@ void OverdriveAudioProcessor::parameterChanged (const juce::String& parameterID,
 
 
 //==============================================================================
-bool OverdriveAudioProcessor::hasEditor() const
+bool TubeSchkreamerAudioProcessor::hasEditor() const
 {
     return true; // (change this to false if you choose to not supply an editor)
 }
 
-juce::AudioProcessorEditor* OverdriveAudioProcessor::createEditor()
+juce::AudioProcessorEditor* TubeSchkreamerAudioProcessor::createEditor()
 {
-    return new OverdriveAudioProcessorEditor (*this);
+    return new TubeSchkreamerAudioProcessorEditor (*this);
 }
 
 //==============================================================================
-void OverdriveAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
+void TubeSchkreamerAudioProcessor::getStateInformation (juce::MemoryBlock& destData)
 {
     // You should use this method to store your parameters in the memory block.
     // You could do that either as raw data, or use the XML or ValueTree classes
     // as intermediaries to make it easy to save and load complex data.
 }
 
-void OverdriveAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
+void TubeSchkreamerAudioProcessor::setStateInformation (const void* data, int sizeInBytes)
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
@@ -315,5 +315,5 @@ void OverdriveAudioProcessor::setStateInformation (const void* data, int sizeInB
 // This creates new instances of the plugin..
 juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 {
-    return new OverdriveAudioProcessor();
+    return new TubeSchkreamerAudioProcessor();
 }
