@@ -35,7 +35,7 @@ TubeSchkreamerAudioProcessor::TubeSchkreamerAudioProcessor()
 
 TubeSchkreamerAudioProcessor::~TubeSchkreamerAudioProcessor()
 {
-    treeState.addParameterListener("POWER", this);
+    treeState.removeParameterListener("POWER", this);
     treeState.removeParameterListener("PREGAIN", this);
     treeState.removeParameterListener("LOWPASSCUTOFF", this);
     treeState.removeParameterListener("VOLUME", this);
