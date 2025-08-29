@@ -230,13 +230,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout TubeSchkreamerAudioProcessor
     const float maxVolume = 2.0f;
     const float defaultVolume = 0.8f;
     
-    auto power = std::make_unique<juce::AudioParameterBool>("POWER", "Power", true);
+    auto power = std::make_unique<juce::AudioParameterBool>(juce::ParameterID("POWER", 1), "Power", true);
     
-    auto pregain = std::make_unique<juce::AudioParameterFloat>("PREGAIN", "OVERDRIVE", juce::NormalisableRange<float>(minPregain, maxPregain, 0.01f), defaultPregain);
+    auto pregain = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("PREGAIN", 1), "OVERDRIVE", juce::NormalisableRange<float>(minPregain, maxPregain, 0.01f), defaultPregain);
     
-    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>("LOWPASSCUTOFF", "TONE", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.3f), defaultLowPassCutoff);
+    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("LOWPASSCUTOFF", 1), "TONE", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.3f), defaultLowPassCutoff);
     
-    auto volume = std::make_unique<juce::AudioParameterFloat>("VOLUME", "LEVEL", juce::NormalisableRange<float>(minVolume, maxVolume, 0.01f), defaultVolume);
+    auto volume = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("VOLUME", 1), "LEVEL", juce::NormalisableRange<float>(minVolume, maxVolume, 0.01f), defaultVolume);
     
     params.push_back(std::move(power));
     params.push_back(std::move(pregain));
