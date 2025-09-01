@@ -33,7 +33,7 @@ juce::TextButton& PowerSwitch::getButton(){
 
 void PowerSwitch::paint (juce::Graphics& g)
 {
-    g.fillAll (juce::Colour(200, 192, 181));
+    g.fillAll (juce::Colours::transparentWhite);
 }
 
 void PowerSwitch::resized()

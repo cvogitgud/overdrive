@@ -27,6 +27,8 @@ TubeSchkreamerAudioProcessorEditor::TubeSchkreamerAudioProcessorEditor (TubeSchk
     addAndMakeVisible(volumeDial);
     addAndMakeVisible(filterDial);
     addAndMakeVisible(pedalLabel);
+    
+    powerLED.setRadius(10.0f);
     addAndMakeVisible(powerLED);
     
     powerSwitch.getButton().onClick = [this] { togglePowerLED(); };
@@ -72,19 +74,18 @@ void TubeSchkreamerAudioProcessorEditor::resized()
     int labelY = filterDial.getBottom();
     pedalLabel.setBounds(labelX, labelY, labelWidth, labelHeight);
     
-    int ledRadius = 10.0f;
+    int ledRadius = 40.0f;
     powerLED.setBounds(getWidth() / 2 - ledRadius / 2, 25, ledRadius, ledRadius);
 }
 
 void TubeSchkreamerAudioProcessorEditor::togglePowerLED(){
     // change colour and call repaint PowerLED
     if (powerSwitch.getButton().getToggleState() == true){
-        powerLED.setLEDColour(juce::Colours::red);
+        powerLED.toggleOn();
     }
     else{
-        powerLED.setLEDColour(juce::Colour(182,182,182).brighter(0.4f));
+        powerLED.toggleOff();
     }
-    powerLED.repaint();
 }
 
 const int TubeSchkreamerAudioProcessorEditor::centerWithHorizontal(const int componentWidth){
