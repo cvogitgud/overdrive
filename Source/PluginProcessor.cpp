@@ -222,7 +222,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout TubeSchkreamerAudioProcessor
     const float maxPregain = 50.0f;
     const float defaultPregain = 10.0f;
     
-    const float minFreq = 1000.0f;
+    const float minFreq = 1500.0f;
     const float maxFreq = 10000.0f;
     const float defaultLowPassCutoff = (maxFreq + minFreq) / 2.0f;
     
