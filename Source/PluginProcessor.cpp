@@ -106,20 +106,18 @@ void TubeSchkreamerAudioProcessor::changeProgramName (int index, const juce::Str
 //==============================================================================
 void TubeSchkreamerAudioProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
 {
+    int numChannels = getTotalNumOutputChannels();
     juce::dsp::ProcessSpec spec;
     spec.sampleRate = sampleRate;
     spec.maximumBlockSize = samplesPerBlock;
-    spec.numChannels = getTotalNumOutputChannels();
+    spec.numChannels = numChannels;
     
-    pregain.reset();
-    pregain.prepare(spec);
-    pregain.setRampDurationSeconds(0.02f);
-    pregain.setGainLinear(treeState.getRawParameterValue("PREGAIN")->load());
+    overdrive.prepareToPlay(sampleRate, samplesPerBlock, numChannels);
     
-    highPassFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
-    lowPassFilter.prepareToPlay(sampleRate, samplesPerBlock, getTotalNumOutputChannels());
-    
+    highPassFilter.prepareToPlay(sampleRate, samplesPerBlock, numChannels);
     highPassFilter.updateCutoff(highPassCutoff);
+    
+    lowPassFilter.prepareToPlay(sampleRate, samplesPerBlock, numChannels);
     
     antiAliasingFilter.reset();
     antiAliasingFilter.prepare(spec);
@@ -128,6 +126,7 @@ void TubeSchkreamerAudioProcessor::prepareToPlay (double sampleRate, int samples
     volume.prepare(spec);
     volume.setRampDurationSeconds(0.02f);
     volume.setGainLinear(treeState.getRawParameterValue("VOLUME")->load());
+    
     updateParameters();
 }
 
@@ -178,42 +177,15 @@ void TubeSchkreamerAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
 
         highPassFilter.process(buffer);
         antiAliasingFilter.process(juce::dsp::ProcessContextReplacing<float> (block));
-        pregain.process(juce::dsp::ProcessContextReplacing<float> (block));
         
-        for (int channel = 0; channel < totalNumInputChannels; ++channel)
-        {
-            auto* channelData = buffer.getWritePointer (channel);
-
-            for (int sample = 0; sample < block.getNumSamples(); ++sample){
-                float input = channelData[sample];
-                channelData[sample] = udoDistortion(input);
-            }
-        }
+        overdrive.processBlock(block);
         
         volume.process(juce::dsp::ProcessContextReplacing<float> (block));
         lowPassFilter.process(buffer);
     }
 }
 
-float TubeSchkreamerAudioProcessor::udoDistortion(float input){
-    float output = 0.0f;
-    float absInput = std::fabs(input);
-    float signInput = (input >= 0) ? 1.0f : -1.0f;
-    float threshold = 1.0f/3.0f;
 
-    if (absInput < threshold) {
-        output = 2.0f * input;
-    }
-    else if (absInput >= threshold && absInput < (2.0f * threshold)){
-        float base = 2.0f - 3.0f * absInput;
-        output = signInput * (3.0f - (base * base)) / 3.0f;
-    }
-    else {
-        output = signInput;
-    }
-    
-    return output;
-}
 
 juce::AudioProcessorValueTreeState::ParameterLayout TubeSchkreamerAudioProcessor::createParameterLayout (){
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
@@ -251,7 +223,7 @@ void TubeSchkreamerAudioProcessor::updatePowerOn(){
 }
     
 void TubeSchkreamerAudioProcessor::updatePregain (){
-    pregain.setGainLinear(treeState.getRawParameterValue("PREGAIN")->load());
+    overdrive.setGain(treeState.getRawParameterValue("PREGAIN")->load());
 }
 
 void TubeSchkreamerAudioProcessor::updateLowPassFilter (){

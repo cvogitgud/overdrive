@@ -10,7 +10,8 @@
 
 #include <JuceHeader.h>
 #include "Processing/Enums.h"
-#include "Processing/Filter.h"
+#include "Processing/Filter/Filter.h"
+#include "Processing/Overdrive/Overdrive.h"
 
 //==============================================================================
 /**
@@ -60,8 +61,9 @@ public:
 private:
     bool powerOn = false;
     void updatePowerOn();
+
+    Overdrive overdrive;
     
-    juce::dsp::Gain<float> pregain;
     void updatePregain();
     
     const float highPassCutoff = 70.0f;
@@ -77,8 +79,6 @@ private:
     using Filter = juce::dsp::FIR::Filter<float>;
     using Coefficients = juce::dsp::FIR::Coefficients<float>;
     juce::dsp::ProcessorDuplicator<Filter, Coefficients> antiAliasingFilter;
-    
-    float udoDistortion(float input);
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout ();
     void parameterChanged (const juce::String& parameterID, float newValue) override;

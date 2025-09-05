@@ -11,7 +11,7 @@
 #pragma once
 
 #include <JuceHeader.h>
-#include "Enums.h"
+#include "../Enums.h"
 
 class Filter {
 public:
