@@ -31,7 +31,7 @@ void Overdrive::processBlock(juce::dsp::AudioBlock<float> block){
 
         for (int sample = 0; sample < block.getNumSamples(); ++sample){
             float input = channelData[sample];
-            channelData[sample] = this->processSample(input);
+            channelData[sample] = processSample(input);
         }
     }
 }
