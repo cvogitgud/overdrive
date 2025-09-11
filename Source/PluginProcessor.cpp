@@ -26,19 +26,19 @@ TubeSchkreamerAudioProcessor::TubeSchkreamerAudioProcessor()
                            antiAliasingFilter(juce::dsp::FilterDesign<float>::designFIRLowpassWindowMethod(10000.0f, 44000.0f, 21, juce::dsp::WindowingFunction<float>::hamming))
 #endif
 {
-    treeState.addParameterListener("POWER", this);
-    treeState.addParameterListener("PREGAIN", this);
-    treeState.addParameterListener("LOWPASSCUTOFF", this);
-    treeState.addParameterListener("VOLUME", this);
+    treeState.addParameterListener(paramPower, this);
+    treeState.addParameterListener(paramPregain, this);
+    treeState.addParameterListener(paramLowPassCutoff, this);
+    treeState.addParameterListener(paramVolume, this);
     
 }
 
 TubeSchkreamerAudioProcessor::~TubeSchkreamerAudioProcessor()
 {
-    treeState.removeParameterListener("POWER", this);
-    treeState.removeParameterListener("PREGAIN", this);
-    treeState.removeParameterListener("LOWPASSCUTOFF", this);
-    treeState.removeParameterListener("VOLUME", this);
+    treeState.removeParameterListener(paramPower, this);
+    treeState.removeParameterListener(paramPregain, this);
+    treeState.removeParameterListener(paramLowPassCutoff, this);
+    treeState.removeParameterListener(paramVolume, this);
 }
 
 //==============================================================================
@@ -125,7 +125,6 @@ void TubeSchkreamerAudioProcessor::prepareToPlay (double sampleRate, int samples
     volume.reset();
     volume.prepare(spec);
     volume.setRampDurationSeconds(0.02f);
-    volume.setGainDecibels(treeState.getRawParameterValue("VOLUME")->load());
     
     updateParameters();
 }
@@ -202,13 +201,13 @@ juce::AudioProcessorValueTreeState::ParameterLayout TubeSchkreamerAudioProcessor
     const float maxVolume = juce::Decibels::gainToDecibels<float>(2.0f);
     const float defaultVolume = juce::Decibels::gainToDecibels<float>(1.0f);
     
-    auto power = std::make_unique<juce::AudioParameterBool>(juce::ParameterID("POWER", 1), "Power", true);
+    auto power = std::make_unique<juce::AudioParameterBool>(juce::ParameterID(paramPower, 1), "Power", true);
     
-    auto pregain = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("PREGAIN", 1), "OVERDRIVE", juce::NormalisableRange<float>(minPregain, maxPregain, juce::Decibels::gainToDecibels<float>(0.01f)), defaultPregain);
+    auto pregain = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID(paramPregain, 1), "OVERDRIVE", juce::NormalisableRange<float>(minPregain, maxPregain, juce::Decibels::gainToDecibels<float>(0.01f)), defaultPregain);
     
-    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("LOWPASSCUTOFF", 1), "TONE", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.3f), defaultLowPassCutoff);
+    auto lowPassCutOff = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID(paramLowPassCutoff, 1), "TONE", juce::NormalisableRange<float>(minFreq, maxFreq, 0.01f, 0.3f), defaultLowPassCutoff);
     
-    auto volume = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID("VOLUME", 1), "LEVEL", juce::NormalisableRange<float>(minVolume, maxVolume, juce::Decibels::gainToDecibels<float>(0.01f)), defaultVolume);
+    auto volume = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID(paramVolume, 1), "LEVEL", juce::NormalisableRange<float>(minVolume, maxVolume, juce::Decibels::gainToDecibels<float>(0.01f)), defaultVolume);
     
     params.push_back(std::move(power));
     params.push_back(std::move(pregain));
@@ -219,31 +218,31 @@ juce::AudioProcessorValueTreeState::ParameterLayout TubeSchkreamerAudioProcessor
 }
     
 void TubeSchkreamerAudioProcessor::updatePowerOn(){
-    powerOn = treeState.getRawParameterValue("POWER")->load();
+    powerOn = treeState.getRawParameterValue(paramPower)->load();
 }
     
 
 void TubeSchkreamerAudioProcessor::updateParameters (){
     updatePowerOn();
-    overdrive.setGain(treeState.getRawParameterValue("PREGAIN")->load());
+    overdrive.setGain(treeState.getRawParameterValue(paramPregain)->load());
     
-    const float lowPassCutoff = treeState.getRawParameterValue("LOWPASSCUTOFF")->load();
+    const float lowPassCutoff = treeState.getRawParameterValue(paramLowPassCutoff)->load();
     lowPassFilter.updateCutoff(lowPassCutoff);
 
-    volume.setGainLinear(treeState.getRawParameterValue("VOLUME")->load());
+    volume.setGainLinear(treeState.getRawParameterValue(paramVolume)->load());
 }
 
 void TubeSchkreamerAudioProcessor::parameterChanged (const juce::String& parameterID, float newValue){
-    if (parameterID.compare("PREGAIN") == 0){
+    if (parameterID == paramPregain){
         overdrive.setGain(newValue);
     }
-    else if (parameterID.compare("LOWPASSCUTOFF") == 0){
+    else if (parameterID == paramLowPassCutoff){
         lowPassFilter.updateCutoff(newValue);
     }
-    else if (parameterID.compare("VOLUME") == 0){
+    else if (parameterID == paramVolume){
         volume.setGainDecibels(newValue);
     }
-    else if (parameterID.compare("POWER") == 0){
+    else if (parameterID == paramPower){
         updatePowerOn();
     }
 }
