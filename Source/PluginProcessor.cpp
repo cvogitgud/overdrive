@@ -190,7 +190,6 @@ void TubeSchkreamerAudioProcessor::processBlock (juce::AudioBuffer<float>& buffe
 juce::AudioProcessorValueTreeState::ParameterLayout TubeSchkreamerAudioProcessor::createParameterLayout (){
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     
-    // change parameters from linear gain to decibels
     const float minPregain = juce::Decibels::gainToDecibels<float>(1.0f);
     const float maxPregain = juce::Decibels::gainToDecibels<float>(50.0f);
     const float defaultPregain = juce::Decibels::gainToDecibels<float>(10.0f);
@@ -223,35 +222,26 @@ void TubeSchkreamerAudioProcessor::updatePowerOn(){
     powerOn = treeState.getRawParameterValue("POWER")->load();
 }
     
-void TubeSchkreamerAudioProcessor::updatePregain (){
-    overdrive.setGain(treeState.getRawParameterValue("PREGAIN")->load());
-}
-
-void TubeSchkreamerAudioProcessor::updateLowPassFilter (){
-    const float lowPassCutoff = treeState.getRawParameterValue("LOWPASSCUTOFF")->load();
-    lowPassFilter.updateCutoff(lowPassCutoff);
-}
-
-void TubeSchkreamerAudioProcessor::updateVolume (){
-    volume.setGainLinear(treeState.getRawParameterValue("VOLUME")->load());
-}
 
 void TubeSchkreamerAudioProcessor::updateParameters (){
     updatePowerOn();
-    updatePregain();
-    updateVolume();
-    updateLowPassFilter();
+    overdrive.setGain(treeState.getRawParameterValue("PREGAIN")->load());
+    
+    const float lowPassCutoff = treeState.getRawParameterValue("LOWPASSCUTOFF")->load();
+    lowPassFilter.updateCutoff(lowPassCutoff);
+
+    volume.setGainLinear(treeState.getRawParameterValue("VOLUME")->load());
 }
 
 void TubeSchkreamerAudioProcessor::parameterChanged (const juce::String& parameterID, float newValue){
     if (parameterID.compare("PREGAIN") == 0){
-        updatePregain();
+        overdrive.setGain(newValue);
     }
     else if (parameterID.compare("LOWPASSCUTOFF") == 0){
-        updateLowPassFilter();
+        lowPassFilter.updateCutoff(newValue);
     }
     else if (parameterID.compare("VOLUME") == 0){
-        updateVolume();
+        volume.setGainDecibels(newValue);
     }
     else if (parameterID.compare("POWER") == 0){
         updatePowerOn();

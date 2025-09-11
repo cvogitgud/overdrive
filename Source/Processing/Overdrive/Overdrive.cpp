@@ -19,7 +19,7 @@ void Overdrive::prepareToPlay(double sampleRate, int samplesPerBlock, int numCha
     pregain.reset();
     pregain.prepare(spec);
     pregain.setRampDurationSeconds(0.02f);
-    pregain.setGainDecibels(juce::Decibels::gainToDecibels<float> (1.0f));
+    pregain.setGainDecibels(1.0f);
 }
 
 void Overdrive::processBlock(juce::dsp::AudioBlock<float> block){
