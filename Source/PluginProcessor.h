@@ -58,10 +58,10 @@ public:
     
     juce::AudioProcessorValueTreeState treeState;
     
-    juce::String paramPower { "POWER" };
-    juce::String paramPregain { "PREGAIN" };
+    juce::String paramPower         { "POWER" };
+    juce::String paramPregain       { "PREGAIN" };
     juce::String paramLowPassCutoff { "LOWPASSCUTOFF" };
-    juce::String paramVolume { "VOLUME" };
+    juce::String paramVolume        { "VOLUME" };
     
 private:
     void updatePowerOn();
