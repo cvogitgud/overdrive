@@ -58,32 +58,25 @@ public:
     
     juce::AudioProcessorValueTreeState treeState;
     
-    static juce::String paramPower { "POWER" };
-    static juce::String paramPregain { "PREGAIN" };
-    static juce::String paramLowPassCutoff { "LOWPASSCUTOFF" };
-    static juce::String paramVolume { "VOLUME" };
+    juce::String paramPower { "POWER" };
+    juce::String paramPregain { "PREGAIN" };
+    juce::String paramLowPassCutoff { "LOWPASSCUTOFF" };
+    juce::String paramVolume { "VOLUME" };
     
 private:
-    bool powerOn = false;
     void updatePowerOn();
 
     Overdrive overdrive;
-    
-    void updatePregain();
-    
-    const float highPassCutoff = 70.0f;
     Filter highPassFilter;
-    void updateHighPassFilter();
-    
     Filter lowPassFilter;
-    void updateLowPassFilter();
-    
     juce::dsp::Gain<float> volume;
-    void updateVolume();
     
     using Filter = juce::dsp::FIR::Filter<float>;
     using Coefficients = juce::dsp::FIR::Coefficients<float>;
     juce::dsp::ProcessorDuplicator<Filter, Coefficients> antiAliasingFilter;
+    
+    bool powerOn = false;
+    const float highPassCutoff = 70.0f;
     
     juce::AudioProcessorValueTreeState::ParameterLayout createParameterLayout ();
     void parameterChanged (const juce::String& parameterID, float newValue) override;
